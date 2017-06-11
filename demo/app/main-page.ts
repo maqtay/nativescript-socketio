@@ -2,7 +2,7 @@ import {Observable} from 'data/observable';
 import {ObservableArray} from 'data/observable-array';
 import {Page, NavigatedData} from 'ui/page';
 import frameModule = require('ui/frame');
-import {SocketIO} from 'nativescript-socketio';
+import { SocketIO } from 'nativescript-socketio';
 let socketIO;
 import view = require('ui/core/view');
 let pageData: any = new Observable({

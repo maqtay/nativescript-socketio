@@ -1,8 +1,8 @@
 {
   "name": "nativescript-socketio",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "description": "Socket.IO for nativescript",
-  "main": "socketio.js",
+  "main": "socketio",
   "nativescript": {
     "platforms": {
       "android": "1.6.0",
@@ -14,8 +14,7 @@
     "demo.ios": "npm run preparedemo; cd demo; tns run ios",
     "demo.android": "npm run preparedemo; cd demo; tns run android",
     "preparedemo": "npm run build ; cd demo ; tns plugin remove nativescript-socketio ; tns plugin add .. ; tns install",
-    "setup": "cd demo; npm install; cd ..; cd demo; tns plugin add ..; cd ..",
-    "prepublish": "npm run build"
+    "setup": "cd demo; npm install; cd ..; cd demo; tns plugin add ..; cd .."
   },
   "repository": {
     "type": "git",
@@ -50,7 +49,8 @@
       "name": "Don Burgess",
       "url": "https://github.com/db3dev",
       "email": "don@db3dev.com"
-    },{
+    },
+    {
       "name": "Robert Laverty",
       "url": "https://github.com/roblav96",
       "email": "roblav96@gmail.com"
@@ -63,7 +63,7 @@
   "homepage": "https://github.com/triniwiz/nativescript-socketio",
   "readmeFilename": "README.md",
   "devDependencies": {
-     "tns-core-modules": "^2.2.0",
+    "tns-core-modules": "^2.2.0",
     "tns-platform-declarations": "^2.2.0",
     "typescript": "^1.8.7"
   }

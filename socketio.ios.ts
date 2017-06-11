@@ -1,4 +1,4 @@
-import {device} from "platform"
+import { device } from "platform"
 
 declare var SocketIOClient;
 declare var SocketAckEmitter;
@@ -10,7 +10,7 @@ declare var UInt64;
 
 export class SocketIO {
 
-    private socket: any;
+    socket: any;
 
     /**
      * Class Constructor
@@ -18,43 +18,40 @@ export class SocketIO {
      * args[1]: Connection Options
      */
     constructor(...args: any[]) {
+        let opts = {};
         switch (args.length) {
-            case 2:
-                // Convert options to JS Array 
-                const keys = Object.keys(args[1]);
-
-                // Marshal Connection Options
-                const keysNS = new NSMutableArray();
-                const valuesNS = new NSMutableArray();
-
-                for (let i = 0; i < keys.length; i++) {
-                    keysNS.addObject(keys[i]);
-                    if (typeof args[1][keys[i]] == 'object') {
-                        let obj = args[1][keys[i]]
-                        let key = new NSMutableArray()
-                        key.addObject(obj[0])
-                        let val = new NSMutableArray()
-                        val.addObject(obj[1])
-                        valuesNS.addObject(NSDictionary.dictionaryWithObjectsForKeys(val, key));
-                    } else {
-                        valuesNS.addObject(args[1][keys[i]]);
-                    }
-                }
-
-                // Create Options as NSDictionary
-                const opts = NSDictionary.dictionaryWithObjectsForKeys(valuesNS, keysNS);
-
-                // Create Socket
+            case 1:
                 if (parseInt(device.osVersion) >= 10) {
-					this.socket = SocketIOClient.alloc().initWithSocketURLConfig(
-						NSURL.URLWithString(args[0]),
-						opts
-					);
+                    this.socket = SocketIOClient.alloc().initWithSocketURLConfig(
+                        NSURL.URLWithString(args[0]),
+                        opts
+                    );
                 } else {
-					this.socket = SocketIOClient.alloc().initWithSocketURLOptions(
-						NSURL.URLWithString(args[0]),
-						opts
-					);
+                    this.socket = SocketIOClient.alloc().initWithSocketURLOptions(
+                        NSURL.URLWithString(args[0]),
+                        opts
+                    );
+                }
+                break;
+            case 2:
+                const keys = Object.keys(args[1]);
+                keys.forEach((key, index) => {
+                    if (key === 'query') {
+                        Object.assign(opts, { connectParams: args[1][key] });
+                    } else {
+                        opts[key] = args[1][key];
+                    }
+                });
+                if (parseInt(device.osVersion) >= 10) {
+                    this.socket = SocketIOClient.alloc().initWithSocketURLConfig(
+                        NSURL.URLWithString(args[0]),
+                        opts
+                    );
+                } else {
+                    this.socket = SocketIOClient.alloc().initWithSocketURLOptions(
+                        NSURL.URLWithString(args[0]),
+                        opts
+                    );
                 }
                 break;
 
@@ -90,7 +87,7 @@ export class SocketIO {
 
         // Slice parameters into Event and Message/Ack Callback
         const event = args[0];
-        const payload = Array.prototype.slice.call(args, 1);
+        let payload = Array.prototype.slice.call(args, 1);
 
         // Check for ack callback
         let ack = payload.pop();
@@ -102,9 +99,11 @@ export class SocketIO {
         }
 
         // Send Emit
+        if (typeof payload !== 'string') {
+            payload = JSON.stringify(payload);
+        }
         if (ack) {
-
-            const emit = this.socket.emitWithAckWithItems(event, payload)
+            const emit = this.socket.emitWithAckWith(event, payload)
             emit(0, (args) => {
 
                 // Convert Arguments to JS Array from NSArray
@@ -120,7 +119,7 @@ export class SocketIO {
         }
         else {
             // Emit without Ack Callback
-            this.socket.emitWithItems(event, payload);
+            this.socket.emitWith(event, payload);
         }
 
     }

@@ -1,4 +1,13 @@
 
+declare class OnAckCallback extends NSObject {
+
+	static alloc(): OnAckCallback; // inherited from NSObject
+
+	static new(): OnAckCallback; // inherited from NSObject
+
+	timingOutAfterCallback(seconds: number, callback: (p1: NSArray<any>) => void): void;
+}
+
 declare class SSLCert extends NSObject {
 
 	static alloc(): SSLCert; // inherited from NSObject
@@ -14,30 +23,13 @@ declare class SSLCert extends NSObject {
 	initWithKey(key: any): this;
 }
 
-declare class SSLSecurity extends NSObject {
-
-	static alloc(): SSLSecurity; // inherited from NSObject
-
-	static new(): SSLSecurity; // inherited from NSObject
-
-	validatedDN: boolean;
-
-	constructor(o: { certs: NSArray<SSLCert>; usePublicKeys: boolean; });
-
-	constructor(o: { usePublicKeys: boolean; });
-
-	initWithCertsUsePublicKeys(certs: NSArray<SSLCert>, usePublicKeys: boolean): this;
-
-	initWithUsePublicKeys(usePublicKeys: boolean): this;
-
-	isValidDomain(trust: any, domain: string): boolean;
-}
-
 declare class SocketAckEmitter extends NSObject {
 
 	static alloc(): SocketAckEmitter; // inherited from NSObject
 
 	static new(): SocketAckEmitter; // inherited from NSObject
+
+	readonly expected: boolean;
 
 	with(items: NSArray<any>): void;
 }
@@ -48,9 +40,9 @@ declare class SocketAnyEvent extends NSObject {
 
 	static new(): SocketAnyEvent; // inherited from NSObject
 
-	/* readonly */ event: string;
+	readonly event: string;
 
-	/* readonly */ items: NSArray<any>;
+	readonly items: NSArray<any>;
 }
 
 declare class SocketClientManager extends NSObject {
@@ -59,7 +51,7 @@ declare class SocketClientManager extends NSObject {
 
 	static new(): SocketClientManager; // inherited from NSObject
 
-	static sharedManager(): SocketClientManager;
+	static readonly sharedManager: SocketClientManager;
 
 	addSocketLabeledAs(socket: SocketIOClient, label: string): void;
 
@@ -80,11 +72,11 @@ declare class SocketEngine extends NSObject implements NSURLSessionDelegate, Soc
 
 	static new(): SocketEngine; // inherited from NSObject
 
-	/* readonly */ invalidated: boolean;
+	readonly invalidated: boolean;
 
 	postWait: NSArray<string>;
 
-	/* readonly */ session: NSURLSession;
+	readonly session: NSURLSession;
 
 	waitingForPoll: boolean;
 
@@ -92,57 +84,51 @@ declare class SocketEngine extends NSObject implements NSURLSessionDelegate, Soc
 
 	client: SocketEngineClient; // inherited from SocketEngineSpec
 
-	/* readonly */ closed: boolean; // inherited from SocketEngineSpec
+	readonly closed: boolean; // inherited from SocketEngineSpec
 
 	connectParams: NSDictionary<string, any>; // inherited from SocketEngineSpec
 
-	/* readonly */ connected: boolean; // inherited from SocketEngineSpec
+	readonly connected: boolean; // inherited from SocketEngineSpec
 
-	/* readonly */ cookies: NSArray<NSHTTPCookie>; // inherited from SocketEngineSpec
+	readonly cookies: NSArray<NSHTTPCookie>; // inherited from SocketEngineSpec
 
-	/* readonly */ debugDescription: string; // inherited from NSObjectProtocol
+	readonly debugDescription: string; // inherited from NSObjectProtocol
 
-	/* readonly */ description: string; // inherited from NSObjectProtocol
+	readonly description: string; // inherited from NSObjectProtocol
 
-	/* readonly */ doubleEncodeUTF8: boolean; // inherited from SocketEngineSpec
+	readonly doubleEncodeUTF8: boolean; // inherited from SocketEngineSpec
 
-	/* readonly */ emitQueue: NSObject; // inherited from SocketEngineSpec
+	readonly extraHeaders: NSDictionary<string, string>; // inherited from SocketEngineSpec
 
-	/* readonly */ extraHeaders: NSDictionary<string, string>; // inherited from SocketEngineSpec
+	readonly fastUpgrade: boolean; // inherited from SocketEngineSpec
 
-	/* readonly */ fastUpgrade: boolean; // inherited from SocketEngineSpec
+	readonly forcePolling: boolean; // inherited from SocketEngineSpec
 
-	/* readonly */ forcePolling: boolean; // inherited from SocketEngineSpec
+	readonly forceWebsockets: boolean; // inherited from SocketEngineSpec
 
-	/* readonly */ forceWebsockets: boolean; // inherited from SocketEngineSpec
+	readonly hash: number; // inherited from NSObjectProtocol
 
-	/* readonly */ handleQueue: NSObject; // inherited from SocketEngineSpec
+	readonly isProxy: boolean; // inherited from NSObjectProtocol
 
-	/* readonly */ hash: number; // inherited from NSObjectProtocol
+	readonly polling: boolean; // inherited from SocketEngineSpec
 
-	/* readonly */ isProxy: boolean; // inherited from NSObjectProtocol
+	readonly probing: boolean; // inherited from SocketEngineSpec
 
-	/* readonly */ parseQueue: NSObject; // inherited from SocketEngineSpec
+	readonly sid: string; // inherited from SocketEngineSpec
 
-	/* readonly */ polling: boolean; // inherited from SocketEngineSpec
+	readonly socketPath: string; // inherited from SocketEngineSpec
 
-	/* readonly */ probing: boolean; // inherited from SocketEngineSpec
+	readonly superclass: typeof NSObject; // inherited from NSObjectProtocol
 
-	/* readonly */ sid: string; // inherited from SocketEngineSpec
+	readonly urlPolling: NSURL; // inherited from SocketEngineSpec
 
-	/* readonly */ socketPath: string; // inherited from SocketEngineSpec
+	readonly urlWebSocket: NSURL; // inherited from SocketEngineSpec
 
-	/* readonly */ superclass: typeof NSObject; // inherited from NSObjectProtocol
+	readonly websocket: boolean; // inherited from SocketEngineSpec
 
-	/* readonly */ urlPolling: NSURL; // inherited from SocketEngineSpec
+	readonly ws: WebSocket; // inherited from SocketEngineSpec
 
-	/* readonly */ urlWebSocket: NSURL; // inherited from SocketEngineSpec
-
-	/* readonly */ websocket: boolean; // inherited from SocketEngineSpec
-
-	/* readonly */ ws: WebSocket; // inherited from SocketEngineSpec
-
-	/* readonly */  // inherited from NSObjectProtocol
+	readonly  // inherited from NSObjectProtocol
 
 	constructor(o: { client: SocketEngineClient; url: NSURL; options: NSDictionary<any, any>; }); // inherited from SocketEngineSpec
 
@@ -152,15 +138,17 @@ declare class SocketEngine extends NSObject implements NSURLSessionDelegate, Soc
 
 	URLSessionDidReceiveChallengeCompletionHandler(session: NSURLSession, challenge: NSURLAuthenticationChallenge, completionHandler: (p1: NSURLSessionAuthChallengeDisposition, p2: NSURLCredential) => void): void;
 
+	URLSessionWithSessionDidBecomeInvalidWithError(session: NSURLSession, error: NSError): void;
+
 	class(): typeof NSObject;
 
 	conformsToProtocol(aProtocol: any /* Protocol */): boolean;
 
 	connect(): void;
 
-	didError(error: string): void;
+	didErrorWithReason(reason: string): void;
 
-	disconnect(reason: string): void;
+	disconnectWithReason(reason: string): void;
 
 	doFastUpgrade(): void;
 
@@ -190,20 +178,20 @@ declare class SocketEngine extends NSObject implements NSURLSessionDelegate, Soc
 
 	self(): this;
 
-	websocketDidConnect(socket: WebSocket): void;
+	websocketDidConnectWithSocket(socket: WebSocket): void;
 
-	websocketDidDisconnectError(socket: WebSocket, error: NSError): void;
+	websocketDidDisconnectWithSocketError(socket: WebSocket, error: NSError): void;
 
 	writeWithTypeWithData(msg: string, type: SocketEnginePacketType, data: NSArray<NSData>): void;
 }
 
 interface SocketEngineClient {
 
-	engineDidClose(reason: string): void;
+	engineDidCloseWithReason(reason: string): void;
 
-	engineDidError(reason: string): void;
+	engineDidErrorWithReason(reason: string): void;
 
-	engineDidOpen(reason: string): void;
+	engineDidOpenWithReason(reason: string): void;
 
 	parseEngineBinaryData(data: NSData): void;
 
@@ -245,8 +233,6 @@ interface SocketEngineSpec {
 
 	doubleEncodeUTF8: boolean;
 
-	emitQueue: NSObject;
-
 	extraHeaders: NSDictionary<string, string>;
 
 	fastUpgrade: boolean;
@@ -254,10 +240,6 @@ interface SocketEngineSpec {
 	forcePolling: boolean;
 
 	forceWebsockets: boolean;
-
-	handleQueue: NSObject;
-
-	parseQueue: NSObject;
 
 	polling: boolean;
 
@@ -277,9 +259,9 @@ interface SocketEngineSpec {
 
 	connect(): void;
 
-	didError(error: string): void;
+	didErrorWithReason(reason: string): void;
 
-	disconnect(reason: string): void;
+	disconnectWithReason(reason: string): void;
 
 	doFastUpgrade(): void;
 
@@ -304,7 +286,7 @@ declare class SocketIOClient extends NSObject implements SocketEngineClient {
 
 	static new(): SocketIOClient; // inherited from NSObject
 
-	/* readonly */ engine: SocketEngineSpec;
+	readonly engine: SocketEngineSpec;
 
 	forceNew: boolean;
 
@@ -314,29 +296,29 @@ declare class SocketIOClient extends NSObject implements SocketEngineClient {
 
 	reconnects: boolean;
 
-	/* readonly */ sid: string;
+	readonly sid: string;
 
-	/* readonly */ socketURL: NSURL;
+	readonly socketURL: NSURL;
 
-	/* readonly */ status: SocketIOClientStatus;
+	readonly status: SocketIOClientStatus;
 
 	constructor(o: { socketURL: NSURL; config: NSDictionary<any, any>; });
 
 	connect(): void;
 
-	connectWithTimeoutAfterWithTimeoutHandler(timeoutAfter: number, handler: () => void): void;
+	connectWithTimeoutAfterWithHandler(timeoutAfter: number, handler: () => void): void;
 
 	disconnect(): void;
 
-	emitWithAckWithItems(event: string, items: NSArray<any>): (p1: number, p2: (p1: NSArray<any>) => void) => void;
+	emitWith(event: string, items: NSArray<any>): void;
 
-	emitWithItems(event: string, items: NSArray<any>): void;
+	emitWithAckWith(event: string, items: NSArray<any>): OnAckCallback;
 
-	engineDidClose(reason: string): void;
+	engineDidCloseWithReason(reason: string): void;
 
-	engineDidError(reason: string): void;
+	engineDidErrorWithReason(reason: string): void;
 
-	engineDidOpen(reason: string): void;
+	engineDidOpenWithReason(reason: string): void;
 
 	handleEventDataIsInternalMessageWithAck(event: string, data: NSArray<any>, isInternalMessage: boolean, ack: number): void;
 
@@ -382,19 +364,19 @@ declare var SocketIOVersionString: interop.Reference<number>;
 
 declare class WebSocket extends NSObject implements NSStreamDelegate {
 
-	static ErrorDomain(): string;
-
 	static alloc(): WebSocket; // inherited from NSObject
 
 	static new(): WebSocket; // inherited from NSObject
 
-	callbackQueue: NSObject;
+	readonly currentURL: NSURL;
 
-	/* readonly */ currentURL: NSURL;
+	disableSSLCertValidation: boolean;
+
+	enabledSSLCipherSuites: NSArray<number>;
 
 	headers: NSDictionary<string, string>;
 
-	/* readonly */ isConnected: boolean;
+	readonly isConnected: boolean;
 
 	onConnect: () => void;
 
@@ -402,33 +384,33 @@ declare class WebSocket extends NSObject implements NSStreamDelegate {
 
 	onDisconnect: (p1: NSError) => void;
 
-	onPong: () => void;
+	onPong: (p1: NSData) => void;
 
 	onText: (p1: string) => void;
 
 	origin: string;
 
-	security: SSLSecurity;
-
-	selfSignedSSL: boolean;
-
 	timeout: number;
 
 	voipEnabled: boolean;
 
-	/* readonly */ debugDescription: string; // inherited from NSObjectProtocol
+	static readonly ErrorDomain: string;
 
-	/* readonly */ description: string; // inherited from NSObjectProtocol
+	readonly debugDescription: string; // inherited from NSObjectProtocol
 
-	/* readonly */ hash: number; // inherited from NSObjectProtocol
+	readonly description: string; // inherited from NSObjectProtocol
 
-	/* readonly */ isProxy: boolean; // inherited from NSObjectProtocol
+	readonly hash: number; // inherited from NSObjectProtocol
 
-	/* readonly */ superclass: typeof NSObject; // inherited from NSObjectProtocol
+	readonly isProxy: boolean; // inherited from NSObjectProtocol
 
-	/* readonly */  // inherited from NSObjectProtocol
+	readonly superclass: typeof NSObject; // inherited from NSObjectProtocol
+
+	readonly  // inherited from NSObjectProtocol
 
 	constructor(o: { url: NSURL; protocols: NSArray<string>; });
+
+	constructor(o: { url: NSURL; writeQueueQOS: NSQualityOfService; protocols: NSArray<string>; });
 
 	class(): typeof NSObject;
 
@@ -437,6 +419,8 @@ declare class WebSocket extends NSObject implements NSStreamDelegate {
 	connect(): void;
 
 	initWithUrlProtocols(url: NSURL, protocols: NSArray<string>): this;
+
+	initWithUrlWriteQueueQOSProtocols(url: NSURL, writeQueueQOS: NSQualityOfService, protocols: NSArray<string>): this;
 
 	isEqual(object: any): boolean;
 
@@ -458,9 +442,9 @@ declare class WebSocket extends NSObject implements NSStreamDelegate {
 
 	streamHandleEvent(aStream: NSStream, eventCode: NSStreamEvent): void;
 
-	writeDataCompletion(data: NSData, completion: () => void): void;
+	writeWithDataCompletion(data: NSData, completion: () => void): void;
 
-	writePingCompletion(data: NSData, completion: () => void): void;
+	writeWithPingCompletion(ping: NSData, completion: () => void): void;
 
-	writeStringCompletion(str: string, completion: () => void): void;
+	writeWithStringCompletion(string: string, completion: () => void): void;
 }

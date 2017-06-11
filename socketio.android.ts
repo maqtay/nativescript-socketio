@@ -89,7 +89,7 @@ export class SocketIO {
         this.socket = instance;
     }
 
-    joinNamespace(nsp: String): void {
+    joinNamespace(nsp: string): void {
         if (this.socket.connected()) {
 
             const manager = this.socket.io();
