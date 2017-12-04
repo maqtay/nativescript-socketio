@@ -58,4 +58,4 @@ tns run android
 ```
 
 ##Screenshot
-![socketio](screenshots/socketio_.gif?raw=true)
+![socketio](src/screenshots/socketio_.gif?raw=true)
