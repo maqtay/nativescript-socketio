@@ -1,34 +1,34 @@
-declare var io: any;
-import app = require("application");
-const Emitter = io.socket.emitter.Emitter;
+import { Common } from "./socketio-common";
+
 const IO = io.socket.client.IO;
-const Socket = io.socket.client.Socket;
-const Ack = io.socket.client.Ack;
-const JSONObject = org.json.JSONObject;
-const JSONArray = org.json.JSONArray;
-const JSONException = org.json.JSONException;
-export class SocketIO {
-    private socket: any;
+
+export class SocketIO extends Common {
+
     constructor(...args: any[]) {
+        super();
         switch (args.length) {
-            case 2:
+            case 2: {
                 let opts = new IO.Options();
-                (<any>Object).assign(opts, args[1]);
+                Object.assign(opts, args[1]);
                 this.socket = IO.socket(args[0], opts);
                 break;
-            case 3:
+            }
+
+            case 3: {
                 this.instance = args.pop();
                 break;
-        }
+            }
 
+            default:
+        }
     }
 
     on(event: string, callback) {
-        this.socket.on(event, new Emitter.Listener({
-            call: function (args) {
+        this.socket.on(event, new io.socket.emitter.Emitter.Listener({
+            call(args) {
                 let payload = Array.prototype.slice.call(args);
                 let ack = payload.pop();
-                if (ack && !(ack.getClass().getName().indexOf('io.socket.client.Socket') === 0 && ack.call)) {
+                if (ack && !(ack.getClass().getName().indexOf("io.socket.client.Socket") === 0 && ack.call)) {
                     payload.push(ack);
                     ack = null;
                 }
@@ -38,87 +38,65 @@ export class SocketIO {
                 if (ack) {
                     let _ack = ack;
                     ack = function () {
-                        var args = Array.prototype.slice.call(arguments).map(SocketIO.serialize);
-                        _ack.call(args);
+                        let _args = Array.prototype.slice.call(arguments).map(SocketIO.serialize);
+                        _ack.call(_args);
                     };
                     payload.push(ack);
                 }
                 callback.apply(null, payload);
-
             }
-        }))
-    }
-
-    connect() {
-        this.socket.connect();
+        }));
     }
 
     emit(...args: any[]) {
         if (!args) {
-            return console.error('Emit Failed: No arguments');
+            return console.error("Emit Failed: No arguments");
         }
 
         let event = args[0];
         let payload = Array.prototype.slice.call(args, 1);
         let ack = payload.pop();
-        if (ack && typeof ack !== 'function') {
+        if (ack && typeof ack !== "function") {
             payload.push(ack);
             ack = null;
         }
         payload = payload.map(SocketIO.serialize);
         if (ack) {
-            payload.push(new Ack({
-                call: (args) => {
-                    args = Array.prototype.slice.call(args).map(SocketIO.deserialize);
-                    ack.apply(null, args);
-                },
+            payload.push(new io.socket.client.Ack({
+                call: _args => ack.apply(null, Array.prototype.slice.call(_args).map(SocketIO.deserialize)),
             }));
         }
         this.socket.emit(event, payload);
     }
 
-    disconnect() {
-        this.socket.disconnect();
-    }
-
-    public get instance() {
-        return this.socket;
-    }
-
-    public set instance(instance) {
-        this.socket = instance;
-    }
-
     joinNamespace(nsp: string): void {
         if (this.socket.connected()) {
-
             const manager = this.socket.io();
             this.socket = manager.socket(nsp);
 
-            // Only join if currently connected. Otherwise just configure to join on connect. 
+            // Only join if currently connected. Otherwise just configure to join on connect.
             // This mirrors IOS behavior
             this.socket.connect();
-
-        }
-        else {
-
+        } else {
             const manager = this.socket.io();
             this.socket = manager.socket(nsp);
-
         }
     }
 
     leaveNamespace(): void {
         // Not Implemented
     }
+
     static serialize(value) {
         let store;
         switch (typeof value) {
-            case 'string':
-            case 'boolean':
-            case 'number':
+            case "string":
+            case "boolean":
+            case "number": {
                 return value;
-            case 'object':
+            }
+
+            case "object": {
                 if (!value) {
                     return null;
                 }
@@ -127,56 +105,61 @@ export class SocketIO {
                     return value.toJSON();
                 }
                 if (Array.isArray(value)) {
-                    store = new JSONArray();
-                    value.forEach((item) => {
-                        store.put(item);
-                    });
+                    store = new org.json.JSONArray();
+                    value.forEach((item) => store.put(item));
                     return store;
                 }
-                store = new JSONObject();
-                Object.keys(value).forEach((key) => {
-                    let item = value[key];
-                    store.put(key, SocketIO.serialize(item));
-                })
+                store = new org.json.JSONObject();
+                Object.keys(value).forEach((key) => store.put(key, SocketIO.serialize(value[key])));
                 return store;
+            }
+
             default: return null;
         }
 
     }
+
     static deserialize(value) {
-        if (value === null || typeof value !== 'object') {
+        if (value === null || typeof value !== "object") {
             return value;
         }
         let store;
         switch (value.getClass().getName()) {
-            case 'java.lang.String':
+            case "java.lang.String": {
                 return String(value);
-            case 'java.lang.Boolean':
+            }
+
+            case "java.lang.Boolean": {
                 return Boolean(value);
-            case 'java.lang.Integer':
-            case 'java.lang.Long':
-            case 'java.lang.Double':
-            case 'java.lang.Short':
+            }
+
+            case "java.lang.Integer":
+            case "java.lang.Long":
+            case "java.lang.Double":
+            case "java.lang.Short": {
                 return Number(value);
-            case 'org.json.JSONArray':
+            }
+
+            case "org.json.JSONArray": {
                 store = new Array();
-                for (let i = 0; i < value.length(); i++) {
-                    store[i] = SocketIO.deserialize(value.get(i));
+                for (let j = 0; j < value.length(); j++) {
+                    store[j] = SocketIO.deserialize(value.get(j));
                 }
                 break;
-            case 'org.json.JSONObject':
+            }
+
+            case "org.json.JSONObject": {
                 store = new Object();
                 let i = value.keys();
                 while (i.hasNext()) {
                     let key = i.next();
-                    store[key] = SocketIO.deserialize(value.get(key))
+                    store[key] = SocketIO.deserialize(value.get(key));
                 }
                 break;
-            default:
-                store = null;
+            }
+
+            default: store = null;
         }
         return store;
-
     }
-
 }

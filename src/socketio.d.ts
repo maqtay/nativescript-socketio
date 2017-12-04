@@ -1,11 +1,8 @@
-export declare class SocketIO {
-    private socket;
+import { Common } from "./socketio-common";
+export declare class SocketIO extends Common {
     constructor(...args: any[]);
     on(event: string, callback: any): void;
-    connect(): void;
     emit(...args: any[]): void;
-    disconnect(): void;
-    instance: any;
     joinNamespace(nsp: string): void;
     leaveNamespace(): void;
     static serialize(value: any): any;

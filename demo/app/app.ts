@@ -1,6 +1,9 @@
-﻿import application = require('application');
+﻿import { start, getResources, setResources } from "tns-core-modules/application/application";
 import moment = require("moment");
-application.start({ moduleName: 'login' });
-application.resources['timeFromNow'] = function(date){
-    return moment(date).fromNow();
-}
+
+start({ moduleName: "login" });
+
+const resources = getResources();
+resources["timeFromNow"] = (date) => moment(date).fromNow();
+
+setResources(resources);
