@@ -3,9 +3,12 @@ import { NativeScriptModule } from "nativescript-angular/nativescript.module";
 import { AppRoutingModule } from "./app.routing";
 import { AppComponent } from "./app.component";
 
-import { ItemService } from "./item/item.service";
-import { ItemsComponent } from "./item/items.component";
-import { ItemDetailComponent } from "./item/item-detail.component";
+import { LoginComponent } from "./login/login.component";
+import { MainPageComponent } from "./main-page/main-page.component";
+
+import { SocketIOModule } from "nativescript-socketio/angular";
+import { isAndroid } from "tns-core-modules/platform/platform";
+import { TimeFromNow } from "./timeFromNow.pipe";
 
 // Uncomment and add to NgModule imports if you need to use two-way binding
 // import { NativeScriptFormsModule } from "nativescript-angular/forms";
@@ -13,21 +16,24 @@ import { ItemDetailComponent } from "./item/item-detail.component";
 // Uncomment and add to NgModule imports  if you need to use the HTTP wrapper
 // import { NativeScriptHttpModule } from "nativescript-angular/http";
 
+const server = isAndroid ? "http://192.168.8.54:3001" : "http://localhost:3001";
+
 @NgModule({
     bootstrap: [
         AppComponent
     ],
     imports: [
         NativeScriptModule,
-        AppRoutingModule
+        SocketIOModule.forRoot(server),
+        AppRoutingModule,
     ],
     declarations: [
         AppComponent,
-        ItemsComponent,
-        ItemDetailComponent
+        TimeFromNow,
+        LoginComponent,
+        MainPageComponent
     ],
     providers: [
-        ItemService
     ],
     schemas: [
         NO_ERRORS_SCHEMA

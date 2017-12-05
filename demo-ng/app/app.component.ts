@@ -1,8 +1,21 @@
-import { Component } from "@angular/core";
+import { Component, OnInit, OnDestroy } from "@angular/core";
+import { SocketIO } from "nativescript-socketio/angular";
 
 @Component({
     selector: "ns-app",
     templateUrl: "app.component.html",
 })
 
-export class AppComponent { }
+export class AppComponent implements OnInit, OnDestroy {
+    constructor(
+        private socketIO: SocketIO,
+    ) { }
+
+    ngOnInit() {
+        this.socketIO.connect();
+    }
+
+    ngOnDestroy() {
+        this.socketIO.disconnect();
+    }
+}
