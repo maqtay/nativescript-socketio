@@ -1,0 +1,18 @@
+<ActionBar>
+    <ActionItem (tap)="logout($event)" text="Logout"></ActionItem>
+</ActionBar>
+
+<GridLayout columns="2*,*" rows="auto, *" class="page">
+    <TextField #messageEl hint="Enter text" row="0"></TextField>
+    <Button col="1" text="Add" (tap)="sendText(messageEl.text)" row="0"></Button>
+
+    <ListView id="lv" [items]="list" colSpan="2" row="1" class="list-group">
+        <ng-template let-item="item">
+            <GridLayout columns="*,*,*" class="list-group-item messages">
+                <Label [text]="item.username"></Label>
+                <Label [text]="item.message" col="1"></Label>
+                <Label [text]="item.timeStamp | timeFromNow" col="2"></Label>
+            </GridLayout>
+        </ng-template>
+    </ListView>
+</GridLayout>
