@@ -19,6 +19,7 @@ io.on('connection', function (socket) {
     if (addedUser) return
     addedUser = true
     socket.username = data.username
+    console.log('Username: ', data.username)
     userList.push({username: data.username})
     socket.emit('login', {userList: userList})
     socket.broadcast.emit('user joined', {
