@@ -1,10 +1,8 @@
 import { device } from "tns-core-modules/platform/platform";
 import { Common } from "./socketio-common";
 
-declare const SocketIOClient;
-
 export class SocketIO extends Common {
-    socket: SocketIOClient;
+    protected socket: SocketIOClient;
 
     /**
      * Class Constructor
@@ -14,7 +12,7 @@ export class SocketIO extends Common {
     constructor(...args: any[]) {
         super();
 
-        let opts = {};
+        let opts = {} as NSDictionary<any, any>;
         switch (args.length) {
             case 1: {
                 if (parseInt(device.osVersion) >= 10) {
@@ -23,7 +21,7 @@ export class SocketIO extends Common {
                         opts
                     );
                 } else {
-                    this.socket = SocketIOClient.alloc().initWithSocketURLOptions(
+                    this.socket = (<any>SocketIOClient).alloc().initWithSocketURLOptions(
                         NSURL.URLWithString(args[0]),
                         opts
                     );
@@ -46,7 +44,7 @@ export class SocketIO extends Common {
                         opts
                     );
                 } else {
-                    this.socket = SocketIOClient.alloc().initWithSocketURLOptions(
+                    this.socket = (<any>SocketIOClient).alloc().initWithSocketURLOptions(
                         NSURL.URLWithString(args[0]),
                         opts
                     );
