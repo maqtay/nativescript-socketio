@@ -1,6 +1,6 @@
 import { Component, OnInit, NgZone } from "@angular/core";
 import { RouterExtensions } from "nativescript-angular/router";
-import { SocketIO } from "nativescript-socketio/angular";
+import { SocketIO } from "nativescript-socketio";
 import { ActivatedRoute } from "@angular/router";
 
 @Component({
@@ -23,7 +23,7 @@ export class MainPageComponent implements OnInit {
 
 	ngOnInit() {
 		this.currentUser = this.route.snapshot.params["username"];
-		console.log("currentUser: "+this.currentUser);
+		console.log("currentUser: " + this.currentUser);
 
 		this.socketIO.on("new message", data => {
 			this.ngZone.run(() => {

@@ -1,6 +1,6 @@
 import { Component, OnInit, NgZone } from "@angular/core";
 import { RouterExtensions } from "nativescript-angular/router";
-import { SocketIO } from "nativescript-socketio/angular";
+import { SocketIO } from "nativescript-socketio";
 
 @Component({
 	selector: "login",
@@ -24,7 +24,7 @@ export class LoginComponent implements OnInit {
 		this.socketIO.on("login", data => {
 			this.ngZone.run(() => {
 				// console.dir(data);
-				console.log("Username: " + this.username); 
+				console.log("Username: " + this.username);
 				this.router.navigate(["main-page", this.username]);
 			});
 		});
