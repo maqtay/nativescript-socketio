@@ -22,16 +22,8 @@ export interface IOOptions {
 export declare type SocketIOOptions = Partial<IOOptions>;
 export declare const SOCKETIO_URL: InjectionToken<{}>;
 export declare const SOCKETIO_OPTIONS: InjectionToken<{}>;
-export declare class SocketIO {
-    private _socket;
+export declare class SocketIO extends Socket {
     constructor(url: string, options?: SocketIOOptions);
-    socket: Socket;
-    on(event: string, callback: any): void;
-    emit(...args: any[]): void;
-    joinNamespace(nsp: string): void;
-    leaveNamespace(): void;
-    static serialize(value: any): any;
-    static deserialize(value: any): any;
 }
 export declare class SocketIOModule {
     static forRoot(url: string, options?: SocketIOOptions): ModuleWithProviders;

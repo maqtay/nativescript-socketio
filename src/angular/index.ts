@@ -1,6 +1,5 @@
 import { NgModule, ModuleWithProviders, InjectionToken, Injectable, Inject } from "@angular/core";
 import { SocketIO as Socket } from "../socketio";
-import { isAndroid } from "tns-core-modules/platform/platform";
 
 export interface IOOptions {
     compress: boolean;
@@ -24,58 +23,18 @@ export const SOCKETIO_URL = new InjectionToken("SOCKETIO_URL");
 export const SOCKETIO_OPTIONS = new InjectionToken("SOCKETIO_OPTIONS");
 
 @Injectable()
-export class SocketIO {
-    private _socket: Socket;
-
+export class SocketIO extends Socket {
     constructor(
         @Inject(SOCKETIO_URL) url: string,
         @Inject(SOCKETIO_OPTIONS) options?: SocketIOOptions
     ) {
-        this.socket = new Socket(url, options);
-    }
-
-    set socket(socket: Socket) {
-        this._socket = socket;
-    }
-
-    get socket(): Socket {
-        return this._socket;
-    }
-
-    on(event: string, callback: any): void {
-        this.socket.on(event, callback);
-    }
-
-    emit(...args: any[]): void {
-        this.socket.emit(...args);
-    }
-
-    joinNamespace(nsp: string): void {
-        this.socket.joinNamespace(nsp);
-    }
-
-    leaveNamespace(): void {
-        this.socket.leaveNamespace();
-    }
-
-    static serialize(value: any): any {
-        if (isAndroid) {
-            return Socket.serialize(value);
-        }
-        return value;
-    }
-
-    static deserialize(value: any): any {
-        if (isAndroid) {
-            return Socket.deserialize(value);
-        }
-        return value;
+        super(url, options);
     }
 }
 
 @NgModule()
 export class SocketIOModule {
-    static forRoot(url: string, options?: SocketIOOptions): ModuleWithProviders {
+    static forRoot(url: string, options: SocketIOOptions = {}): ModuleWithProviders {
         return {
             ngModule: SocketIOModule,
             providers: [
