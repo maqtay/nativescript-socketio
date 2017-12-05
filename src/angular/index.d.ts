@@ -1,5 +1,4 @@
 import { ModuleWithProviders, InjectionToken } from "@angular/core";
-import { SocketIO as Socket } from "../socketio";
 export interface IOOptions {
     compress: boolean;
     connectParams: {
@@ -20,11 +19,8 @@ export interface IOOptions {
     secure: boolean;
 }
 export declare type SocketIOOptions = Partial<IOOptions>;
-export declare const SOCKETIO_URL: InjectionToken<{}>;
-export declare const SOCKETIO_OPTIONS: InjectionToken<{}>;
-export declare class SocketIO extends Socket {
-    constructor(url: string, options?: SocketIOOptions);
-}
+export declare const SOCKETIO_URL: InjectionToken<string>;
+export declare const SOCKETIO_OPTIONS: InjectionToken<Partial<IOOptions>>;
 export declare class SocketIOModule {
     static forRoot(url: string, options?: SocketIOOptions): ModuleWithProviders;
 }

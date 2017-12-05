@@ -1,5 +1,5 @@
-import { NgModule, ModuleWithProviders, InjectionToken, Injectable, Inject } from "@angular/core";
-import { SocketIO as Socket } from "../socketio";
+import { NgModule, ModuleWithProviders, InjectionToken } from "@angular/core";
+import { SocketIO } from "../socketio";
 
 export interface IOOptions {
     compress: boolean;
@@ -19,17 +19,11 @@ export interface IOOptions {
 
 export type SocketIOOptions = Partial<IOOptions>;
 
-export const SOCKETIO_URL = new InjectionToken("SOCKETIO_URL");
-export const SOCKETIO_OPTIONS = new InjectionToken("SOCKETIO_OPTIONS");
+export const SOCKETIO_URL = new InjectionToken<string>("SOCKETIO_URL");
+export const SOCKETIO_OPTIONS = new InjectionToken<SocketIOOptions>("SOCKETIO_OPTIONS");
 
-@Injectable()
-export class SocketIO extends Socket {
-    constructor(
-        @Inject(SOCKETIO_URL) url: string,
-        @Inject(SOCKETIO_OPTIONS) options?: SocketIOOptions
-    ) {
-        super(url, options);
-    }
+function socketIOFactory(url: string, options: SocketIOOptions) {
+    return new SocketIO(url, options);
 }
 
 @NgModule()
@@ -38,7 +32,11 @@ export class SocketIOModule {
         return {
             ngModule: SocketIOModule,
             providers: [
-                SocketIO,
+                {
+                    provide: SocketIO,
+                    useFactory: socketIOFactory,
+                    deps: [SOCKETIO_URL, SOCKETIO_OPTIONS]
+                },
                 { provide: SOCKETIO_URL, useValue: url },
                 { provide: SOCKETIO_OPTIONS, useValue: options },
             ]
