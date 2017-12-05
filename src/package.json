@@ -3,7 +3,7 @@
   "version": "2.4.0",
   "description": "Socket.IO for nativescript",
   "main": "index",
-  "typings": "index",
+  "typings": "index.d.ts",
   "nativescript": {
     "platforms": {
       "android": "3.3.0",
@@ -17,8 +17,8 @@
     "lint-fix": "npm run lint --fix",
     "demo.ios": "npm run preparedemo; cd ../demo; tns run ios",
     "demo.android": "npm run preparedemo; cd ../demo; tns run android",
-    "preparedemo": "npm run build ; cd ../demo ; tns plugin remove nativescript-socketio ; tns plugin add .. ; tns install",
-    "setup": "cd demo; npm install; cd ../src; cd ../demo; tns plugin add ..; cd ../src"
+    "preparedemo": "npm run build ; cd ../demo ; tns plugin remove nativescript-socketio ; tns plugin add ../src ; tns install",
+    "setup": "cd demo; npm install; cd ../src; cd ../demo; tns plugin add ../src; cd ../src"
   },
   "repository": {
     "type": "git",
