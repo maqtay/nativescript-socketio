@@ -52,9 +52,9 @@ new SocketIO(null,null,oldInstance)
 import { SocketIOModule } from "nativescript-socketio/angular";
 
 @NgModule({
-    imports: [
-        SocketIOModule.forRoot(server),
-    ]
+  imports: [
+    SocketIOModule.forRoot(server),
+  ]
 })
 ```
 
@@ -64,18 +64,18 @@ import { Component, OnInit, OnDestroy } from "@angular/core";
 import { SocketIO } from "nativescript-socketio";
 
 @Component({
-    // ...
+  // ...
 })
 export class AppComponent implements OnInit, OnDestroy {
-    constructor(private socketIO: SocketIO) { }
+  constructor(private socketIO: SocketIO) { }
 
-    ngOnInit() {
-        this.socketIO.connect();
-    }
+  ngOnInit() {
+    this.socketIO.connect();
+  }
 
-    ngOnDestroy() {
-        this.socketIO.disconnect();
-    }
+  ngOnDestroy() {
+    this.socketIO.disconnect();
+  }
 }
 ```
 
@@ -85,25 +85,25 @@ import { Component, OnInit, NgZone } from "@angular/core";
 import { SocketIO } from "nativescript-socketio";
 
 @Component({
-    // ...
+  // ...
 })
 export class TestComponent implements OnInit {
-	constructor(
-		private socketIO: SocketIO,
-		private ngZone: NgZone
-	) { }
+  constructor(
+    private socketIO: SocketIO,
+    private ngZone: NgZone
+  ) { }
 
-	ngOnInit() {
-		this.socketIO.on("test", data => {
-			this.ngZone.run(() => {
-                // Do stuff here
-			});
-		});
-	}
+  ngOnInit() {
+    this.socketIO.on("test", data => {
+      this.ngZone.run(() => {
+        // Do stuff here
+      });
+    });
+  }
 
-	test() {
-		this.socketIO.emit("test", { test: "test" });
-	}
+  test() {
+    this.socketIO.emit("test", { test: "test" });
+  }
 }
 ```
 
