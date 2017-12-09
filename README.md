@@ -13,6 +13,8 @@ or
 tns plugin add nativescript-socketio
 ```
 
+## Nativescript Core
+
 Set connection string and options then connect
 
 ```js
@@ -42,20 +44,77 @@ Set instance
 ```js
 new SocketIO(null,null,oldInstance)
 ```
-##Running Demo
+
+## Angular
+
+``` ts
+// app.module.ts
+import { SocketIOModule } from "nativescript-socketio/angular";
+
+@NgModule({
+  imports: [
+    SocketIOModule.forRoot(server),
+  ]
+})
+```
+
+``` ts
+// app.component.ts
+import { Component, OnInit, OnDestroy } from "@angular/core";
+import { SocketIO } from "nativescript-socketio";
+
+@Component({
+  // ...
+})
+export class AppComponent implements OnInit, OnDestroy {
+  constructor(private socketIO: SocketIO) { }
+
+  ngOnInit() {
+    this.socketIO.connect();
+  }
+
+  ngOnDestroy() {
+    this.socketIO.disconnect();
+  }
+}
+```
+
+``` ts
+// test.component.ts
+import { Component, OnInit, NgZone } from "@angular/core";
+import { SocketIO } from "nativescript-socketio";
+
+@Component({
+  // ...
+})
+export class TestComponent implements OnInit {
+  constructor(
+    private socketIO: SocketIO,
+    private ngZone: NgZone
+  ) { }
+
+  ngOnInit() {
+    this.socketIO.on("test", data => {
+      this.ngZone.run(() => {
+        // Do stuff here
+      });
+    });
+  }
+
+  test() {
+    this.socketIO.emit("test", { test: "test" });
+  }
+}
+```
+
+## Running Demo
 
 Start socketio server
-```
+``` bash
 cd demo/demo-server
 npm install
 node app
 ```
 
-start demo
-```
-cd demo
-tns run android
-```
-
-##Screenshot
+## Screenshot
 ![socketio](src/screenshots/socketio_.gif?raw=true)

@@ -3,6 +3,7 @@ import { Common } from "./socketio-common";
 const IO = io.socket.client.IO;
 
 export class SocketIO extends Common {
+    protected socket: any;
 
     constructor(...args: any[]) {
         super();

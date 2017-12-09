@@ -39,7 +39,7 @@
         "types": []
     },
     "exclude": [
-        "demo",
+        "platform",
         "node_modules"
     ],
     "compileOnSave": false

@@ -2,7 +2,7 @@
  *
  */
 export abstract class Common {
-    protected socket: any;
+    protected abstract socket; /** Contains instance of Socket */
 
     abstract emit(...args: any[]): void;
     abstract on(event: string, callback): void;

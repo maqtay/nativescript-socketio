@@ -1,5 +1,6 @@
 import { Common } from "./socketio-common";
 export declare class SocketIO extends Common {
+    protected socket: any;
     constructor(...args: any[]);
     on(event: string, callback: any): void;
     emit(...args: any[]): void;

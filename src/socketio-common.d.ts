@@ -1,5 +1,5 @@
 export declare abstract class Common {
-    protected socket: any;
+    protected abstract socket: any;
     abstract emit(...args: any[]): void;
     abstract on(event: string, callback: any): void;
     abstract joinNamespace(nsp: String): void;

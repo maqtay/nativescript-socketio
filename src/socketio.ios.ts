@@ -1,9 +1,8 @@
 import { device } from "tns-core-modules/platform/platform";
 import { Common } from "./socketio-common";
 
-declare const SocketIOClient;
-
 export class SocketIO extends Common {
+    protected socket: SocketIOClient;
 
     /**
      * Class Constructor
@@ -13,7 +12,7 @@ export class SocketIO extends Common {
     constructor(...args: any[]) {
         super();
 
-        let opts = {};
+        let opts = {} as NSDictionary<any, any>;
         switch (args.length) {
             case 1: {
                 if (parseInt(device.osVersion) >= 10) {
@@ -22,7 +21,7 @@ export class SocketIO extends Common {
                         opts
                     );
                 } else {
-                    this.socket = SocketIOClient.alloc().initWithSocketURLOptions(
+                    this.socket = (<any>SocketIOClient).alloc().initWithSocketURLOptions(
                         NSURL.URLWithString(args[0]),
                         opts
                     );
@@ -45,7 +44,7 @@ export class SocketIO extends Common {
                         opts
                     );
                 } else {
-                    this.socket = SocketIOClient.alloc().initWithSocketURLOptions(
+                    this.socket = (<any>SocketIOClient).alloc().initWithSocketURLOptions(
                         NSURL.URLWithString(args[0]),
                         opts
                     );
@@ -62,7 +61,7 @@ export class SocketIO extends Common {
         }
     }
 
-    on(event: String, callback: Function): void {
+    on(event: string, callback: Function): void {
         this.socket.onCallback(event, (data, ack) => {
             if (ack) {
                 callback(data, ack);
@@ -91,12 +90,12 @@ export class SocketIO extends Common {
         }
 
         // Send Emit
-        if (typeof payload !== "string") {
-            payload = JSON.stringify(payload);
-        }
+        // if (typeof payload !== "string") {
+        //     payload = JSON.stringify(payload);
+        // }
         if (ack) {
             const emit = this.socket.emitWithAckWith(event, payload);
-            emit(0, (_args) => {
+            emit.timingOutAfterCallback(0, (_args) => {
                 // Convert Arguments to JS Array from NSArray
                 const marshalledArgs = [];
                 for (let i = 0; i < _args.count; i++) {
@@ -114,7 +113,7 @@ export class SocketIO extends Common {
 
     }
 
-    joinNamespace(nsp: String): void {
+    joinNamespace(nsp: string): void {
         this.socket.joinNamespace(nsp);
     }
 
