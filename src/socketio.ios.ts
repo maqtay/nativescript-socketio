@@ -53,7 +53,7 @@ export class SocketIO extends Common {
             }
 
             case 3: {
-                this.instance = args.pop();
+                this.socket = args.pop();
                 break;
             }
 
@@ -61,7 +61,11 @@ export class SocketIO extends Common {
         }
     }
 
-    on(event: string, callback: Function): void {
+    get connected(): boolean {
+        return this.socket && this.socket.engine.connected;
+    }
+
+    on(event: string, callback: (...payload) => void): void {
         this.socket.onCallback(event, (data, ack) => {
             if (ack) {
                 callback(data, ack);
@@ -71,14 +75,10 @@ export class SocketIO extends Common {
         });
     }
 
-    emit(...args: any[]): void {
-        if (!args) {
-            return console.error("Emit Failed: No arguments");
+    emit(event: string, ...payload: any[]): void {
+        if (!event) {
+            return console.error("Emit Failed: No Event argument");
         }
-
-        // Slice parameters into Event and Message/Ack Callback
-        const event = args[0];
-        let payload = Array.prototype.slice.call(args, 1);
 
         // Check for ack callback
         let ack = payload.pop();
@@ -89,28 +89,18 @@ export class SocketIO extends Common {
             ack = null;
         }
 
-        // Send Emit
-        // if (typeof payload !== "string") {
-        //     payload = JSON.stringify(payload);
-        // }
+        // Serialize Emit
+        const final = (<any>payload).map(serialize) as NSArray<any>;
+
         if (ack) {
-            const emit = this.socket.emitWithAckWith(event, payload);
-            emit.timingOutAfterCallback(0, (_args) => {
-                // Convert Arguments to JS Array from NSArray
-                const marshalledArgs = [];
-                for (let i = 0; i < _args.count; i++) {
-                    marshalledArgs.push(_args.objectAtIndex(i));
-                }
-
-                // Call callback
-                ack.apply(null, marshalledArgs);
-            });
-
+            const _ack = function (args) {
+                ack.apply(null, deserialize(args));
+            };
+            this.socket.emitWithAckWith(event, final).timingOutAfterCallback(0, _ack);
         } else {
             // Emit without Ack Callback
-            this.socket.emitWith(event, payload);
+            this.socket.emitWith(event, final);
         }
-
     }
 
     joinNamespace(nsp: string): void {
@@ -120,4 +110,62 @@ export class SocketIO extends Common {
     leaveNamespace(): void {
         this.socket.leaveNamespace();
     }
+}
+
+export function serialize(data: any): any {
+    switch (typeof data) {
+        case "string":
+        case "boolean":
+        case "number": {
+            return data;
+        }
+
+        case "object": {
+            if (data instanceof Date) {
+                return data.toJSON();
+            }
+
+            if (!data) {
+                return NSNull.new();
+            }
+
+            if (Array.isArray(data)) {
+                return NSArray.arrayWithArray((<any>data).map(serialize) as NSArray<any>);
+            }
+
+            let node = {} as NSDictionary<string, any>;
+            Object.keys(data).forEach(function (key) {
+                let value = data[key];
+                node[key] = serialize(value);
+            });
+            return NSDictionary.dictionaryWithDictionary(node);
+        }
+
+        default: return NSNull.new();
+    }
+}
+
+export function deserialize(data: any): any {
+    if (data instanceof NSNull) {
+        return null;
+    }
+
+    if (data instanceof NSArray) {
+        let array = [];
+        for (let i = 0, n = data.count; i < n; i++) {
+            array[i] = deserialize(data.objectAtIndex(i));
+        }
+        return array;
+    }
+
+    if (data instanceof NSDictionary) {
+        let dict = {};
+        for (let i = 0, n = data.allKeys.count; i < n; i++) {
+            let key = data.allKeys.objectAtIndex(i);
+            dict[key] = deserialize(data.objectForKey(key));
+        }
+        return dict;
+    }
+
+    return data;
 }
