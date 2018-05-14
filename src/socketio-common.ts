@@ -4,8 +4,18 @@
 export abstract class Common {
     protected abstract socket; /** Contains instance of Socket */
 
-    abstract emit(...args: any[]): void;
-    abstract on(event: string, callback): void;
+    abstract emit(event: string, ...payload: any[]): void;
+    abstract on(event: string, callback: (...payload) => void): void;
+
+    abstract connected: boolean;
+
+    get disconnected() {
+        return !this.connected;
+    }
+
+    get instance() {
+        return this.socket;
+    }
 
     abstract joinNamespace(nsp: String): void;
     abstract leaveNamespace(): void;
@@ -16,13 +26,5 @@ export abstract class Common {
 
     public disconnect() {
         this.socket.disconnect();
-    }
-
-    public get instance() {
-        return this.socket;
-    }
-
-    public set instance(instance) {
-        this.socket = instance;
     }
 }
