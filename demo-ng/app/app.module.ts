@@ -16,7 +16,7 @@ import { TimeFromNow } from "./timeFromNow.pipe";
 // Uncomment and add to NgModule imports  if you need to use the HTTP wrapper
 // import { NativeScriptHttpModule } from "nativescript-angular/http";
 
-const server = isAndroid ? "http://192.168.8.54:3001" : "http://localhost:3001";
+const server = isAndroid ? "http://10.0.2.2:3001" : "http://localhost:3001";
 
 @NgModule({
     bootstrap: [
