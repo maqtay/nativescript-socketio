@@ -8,7 +8,7 @@ let socketIO: SocketIO, pageData = fromObject({
   username: "Osei"
 });
 
-const server = isAndroid ? "http://192.168.8.54:3001" : "http://localhost:3001";
+const server = isAndroid ? "http://10.0.2.2:3001" : "http://localhost:3001";
 
 export function navigatingTo() {
   socketIO = new SocketIO(server, {});
