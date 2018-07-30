@@ -1,17 +1,20 @@
 ﻿[![npm](https://img.shields.io/npm/v/nativescript-socketio.svg)](https://www.npmjs.com/package/nativescript-socketio)
 [![npm](https://img.shields.io/npm/dt/nativescript-socketio.svg?label=npm%20downloads)](https://www.npmjs.com/package/nativescript-socketio)
 # nativescript-socketio
+
+*Note* 3.x uses socket.io 2.0+
+
+
 # Usage
 
-```
-npm install nativescript-socketio
-```
+#### NativeScript 4x
 
-or
+* `tns plugin add nativescript-socketio`
 
-```
-tns plugin add nativescript-socketio
-```
+#### NativeScript 2 - 3x
+
+* `tns plugin add nativescript-socketio@2.5.0`
+
 
 ## Nativescript Core
 

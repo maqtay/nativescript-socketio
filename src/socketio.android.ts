@@ -1,7 +1,11 @@
-import { Common } from "./socketio-common";
+import { Common } from './socketio-common';
+
+declare const io: any, org: any;
 
 export class SocketIO extends Common {
-    protected socket: io.socket.client.Socket;
+    protected socket: any;
+
+    /* io.socket.client.Socket; */
 
     constructor(...args: any[]) {
         super();
@@ -22,6 +26,14 @@ export class SocketIO extends Common {
         }
     }
 
+    connect(){
+        this.socket.connect();
+    }
+
+    disconnect(){
+        this.socket.disconnect();
+    }
+
     get connected(): boolean {
         return this.socket && this.socket.connected();
     }
@@ -31,7 +43,7 @@ export class SocketIO extends Common {
             call(args) {
                 let payload = Array.prototype.slice.call(args);
                 let ack = payload.pop();
-                if (ack && !(ack.getClass().getName().indexOf("io.socket.client.Socket") === 0 && ack.call)) {
+                if (ack && !(ack.getClass().getName().indexOf('io.socket.client.Socket') === 0 && ack.call)) {
                     payload.push(ack);
                     ack = null;
                 }
@@ -52,14 +64,14 @@ export class SocketIO extends Common {
 
     emit(event: string, ...payload: any[]) {
         if (!event) {
-            throw Error("Emit Failed: No Event argument");
+            throw Error('Emit Failed: No Event argument');
         }
 
         // Check for ack callback
         let ack = payload.pop();
 
         // Remove ack if final argument is not a function
-        if (ack && typeof ack !== "function") {
+        if (ack && typeof ack !== 'function') {
             payload.push(ack);
             ack = null;
         }
@@ -102,13 +114,13 @@ export class SocketIO extends Common {
 export function serialize(data: any): any {
     let store;
     switch (typeof data) {
-        case "string":
-        case "boolean":
-        case "number": {
+        case 'string':
+        case 'boolean':
+        case 'number': {
             return data;
         }
 
-        case "object": {
+        case 'object': {
             if (!data) {
                 return null;
             }
@@ -126,42 +138,43 @@ export function serialize(data: any): any {
             return store;
         }
 
-        default: return null;
+        default:
+            return null;
     }
 
 }
 
-export function deserialize(data: any): any {
-    if (data === null || typeof data !== "object") {
+export function deserialize(data): any {
+    if (data === null || typeof data !== 'object') {
         return data;
     }
     let store;
     switch (data.getClass().getName()) {
-        case "java.lang.String": {
+        case 'java.lang.String': {
             return String(data);
         }
 
-        case "java.lang.Boolean": {
+        case 'java.lang.Boolean': {
             return Boolean(data);
         }
 
-        case "java.lang.Integer":
-        case "java.lang.Long":
-        case "java.lang.Double":
-        case "java.lang.Short": {
+        case 'java.lang.Integer':
+        case 'java.lang.Long':
+        case 'java.lang.Double':
+        case 'java.lang.Short': {
             return Number(data);
         }
 
-        case "org.json.JSONArray": {
-            store = new Array();
+        case 'org.json.JSONArray': {
+            store = [];
             for (let j = 0; j < data.length(); j++) {
                 store[j] = deserialize(data.get(j));
             }
             break;
         }
 
-        case "org.json.JSONObject": {
-            store = new Object();
+        case 'org.json.JSONObject': {
+            store = {};
             let i = data.keys();
             while (i.hasNext()) {
                 let key = i.next();
@@ -170,7 +183,8 @@ export function deserialize(data: any): any {
             break;
         }
 
-        default: store = null;
+        default:
+            store = null;
     }
     return store;
 }

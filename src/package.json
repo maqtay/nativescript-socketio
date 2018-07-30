@@ -1,13 +1,13 @@
 {
   "name": "nativescript-socketio",
-  "version": "2.5.0",
+  "version": "3.0.2",
   "description": "Socket.IO for nativescript",
   "main": "index",
   "typings": "index.d.ts",
   "nativescript": {
     "platforms": {
-      "android": "3.3.0",
-      "ios": "3.2.0"
+      "android": "4.0.0",
+      "ios": "4.0.0"
     }
   },
   "scripts": {
@@ -19,8 +19,8 @@
     "demo.ios": "npm run preparedemo && cd ../demo && tns run ios",
     "demo.android": "npm run preparedemo && cd ../demo && tns run android",
     "demo-ng.ios": "npm run preparedemo-ng && cd ../demo-ng && tns run ios --emulator",
-    "demo-ng.ios.device": "npm run preparedemo-ng && cd ../demo-ng && tns platform remove ios && tns run ios",
-    "demo-ng.android": "npm run preparedemo-ng && cd ../demo-ng && tns platform remove android && tns run android --justlaunch",
+    "demo-ng.ios.device": "npm run preparedemo-ng && cd ../demo-ng && tns platform remove ios && tns run ios --syncAllFiles",
+    "demo-ng.android": "npm run preparedemo-ng && cd ../demo-ng && tns platform remove android && tns run android --syncAllFiles",
     "preparedemo": "npm run build && cd ../demo && tns plugin remove nativescript-socketio && tns plugin add ../src && tns install",
     "preparedemo-ng": "npm run build && cd ../demo-ng && tns plugin remove nativescript-socketio && tns plugin add ../src && tns install",
     "setup": "cd demo && npm install && cd ../src && cd ../demo && tns plugin add ../src && cd ../src"
@@ -63,6 +63,11 @@
       "name": "Robert Laverty",
       "url": "https://github.com/roblav96",
       "email": "roblav96@gmail.com"
+    },
+    {
+      "name": "Jeremiah Ogbomo",
+      "url": "https://github.com/jogboms",
+      "email": "jeremiahogbomo@gmail.com"
     }
   ],
   "bugs": {
@@ -72,19 +77,20 @@
   "homepage": "https://github.com/triniwiz/nativescript-socketio",
   "readmeFilename": "README.md",
   "devDependencies": {
-    "@angular/common": "~4.4.6",
-    "@angular/compiler": "~4.4.6",
-    "@angular/compiler-cli": "~4.4.6",
-    "@angular/core": "~4.4.6",
-    "@angular/forms": "~4.4.6",
-    "@angular/http": "~4.4.6",
-    "@angular/platform-browser": "~4.4.6",
-    "@angular/router": "~4.4.6",
-    "zone.js": "~0.8.12",
-    "rxjs": "~5.0.1",
-    "tns-core-modules": "^3.3.0",
-    "tns-platform-declarations": "^3.3.0",
+    "@angular/common": "~6.0.0",
+    "@angular/compiler": "~6.0.0",
+    "@angular/compiler-cli": "~6.0.0",
+    "@angular/core": "~6.0.0",
+    "@angular/forms": "~6.0.0",
+    "@angular/http": "~6.0.0",
+    "@angular/platform-browser": "~6.0.0",
+    "@angular/platform-browser-dynamic": "~6.0.0",
+    "@angular/router": "~6.0.0",
+    "zone.js": "^0.8.12",
+    "rxjs": "~6.0.0",
+    "tns-core-modules": "^4.0.0",
+    "tns-platform-declarations": "^4.0.0",
     "tslint": "~5.6.0",
-    "typescript": "^2.4.2"
+    "typescript": "~2.7.2"
   }
 }

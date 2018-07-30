@@ -1,7 +1,10 @@
-import { Common } from "./socketio-common";
+import { Common } from './socketio-common';
 export declare class SocketIO extends Common {
     protected socket: SocketIOClient;
+    manager: SocketManager;
     constructor(...args: any[]);
+    connect(): void;
+    disconnect(): void;
     readonly connected: boolean;
     on(event: string, callback: (...payload) => void): void;
     emit(event: string, ...payload: any[]): void;

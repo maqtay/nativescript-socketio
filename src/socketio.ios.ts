@@ -1,8 +1,8 @@
-import { device } from "tns-core-modules/platform/platform";
-import { Common } from "./socketio-common";
+import { Common } from './socketio-common';
 
 export class SocketIO extends Common {
     protected socket: SocketIOClient;
+    manager: SocketManager;
 
     /**
      * Class Constructor
@@ -12,61 +12,60 @@ export class SocketIO extends Common {
     constructor(...args: any[]) {
         super();
 
-        let opts = {} as NSDictionary<any, any>;
+        let opts = {} as any;
         switch (args.length) {
             case 1: {
-                if (parseInt(device.osVersion) >= 10) {
-                    this.socket = SocketIOClient.alloc().initWithSocketURLConfig(
-                        NSURL.URLWithString(args[0]),
-                        opts
-                    );
-                } else {
-                    this.socket = (<any>SocketIOClient).alloc().initWithSocketURLOptions(
-                        NSURL.URLWithString(args[0]),
-                        opts
-                    );
-                }
+                this.manager = SocketManager.alloc().initWithSocketURLConfig(NSURL.URLWithString(args[0]),
+                    opts);
+                this.socket = this.manager.defaultSocket;
                 break;
             }
-
             case 2: {
                 const keys = Object.keys(args[1]);
                 keys.forEach((key, index) => {
-                    if (key === "query") {
-                        Object.assign(opts, { connectParams: args[1][key] });
+                    if (key === 'query') {
+                        Object.assign(opts, {connectParams: args[1][key]});
                     } else {
-                        opts[key] = args[1][key];
+                        opts[key] = serialize(args[1][key]);
                     }
                 });
-                if (parseInt(device.osVersion) >= 10) {
-                    this.socket = SocketIOClient.alloc().initWithSocketURLConfig(
-                        NSURL.URLWithString(args[0]),
-                        opts
-                    );
-                } else {
-                    this.socket = (<any>SocketIOClient).alloc().initWithSocketURLOptions(
-                        NSURL.URLWithString(args[0]),
-                        opts
-                    );
-                }
+                this.manager = SocketManager.alloc().initWithSocketURLConfig(NSURL.URLWithString(args[0]),
+                    opts);
+                this.socket = this.manager.defaultSocket;
                 break;
             }
 
             case 3: {
-                this.socket = args.pop();
+                const s = args.pop();
+                this.manager = args.pop().manager;
+                this.socket = s;
                 break;
             }
-
             default:
         }
     }
 
+    connect() {
+        this.socket.connect();
+    }
+
+    disconnect() {
+        this.socket.disconnect();
+    }
+
     get connected(): boolean {
-        return this.socket && this.socket.engine.connected;
+        return this.socket && this.socket.manager.engine.connected;
     }
 
     on(event: string, callback: (...payload) => void): void {
         this.socket.onCallback(event, (data, ack) => {
+            const d = deserialize(data);
+            if(Array.isArray(d)){
+                data = d[0];
+            }else{
+                data = d;
+            }
+
             if (ack) {
                 callback(data, ack);
             } else {
@@ -77,14 +76,14 @@ export class SocketIO extends Common {
 
     emit(event: string, ...payload: any[]): void {
         if (!event) {
-            return console.error("Emit Failed: No Event argument");
+            return console.error('Emit Failed: No Event argument');
         }
 
         // Check for ack callback
         let ack = payload.pop();
 
         // Remove ack if final argument is not a function
-        if (ack && typeof ack !== "function") {
+        if (ack && typeof ack !== 'function') {
             payload.push(ack);
             ack = null;
         }
@@ -96,7 +95,10 @@ export class SocketIO extends Common {
             const _ack = function (args) {
                 ack.apply(null, deserialize(args));
             };
-            this.socket.emitWithAckWith(event, final).timingOutAfterCallback(0, _ack);
+            const e = this.socket.emitWithAckWith(event, final) as any;
+            if (e) {
+                e.timingOutAfterCallback(0, _ack);
+            }
         } else {
             // Emit without Ack Callback
             this.socket.emitWith(event, final);
@@ -104,7 +106,7 @@ export class SocketIO extends Common {
     }
 
     joinNamespace(nsp: string): void {
-        this.socket.joinNamespace(nsp);
+        this.socket.manager.socketForNamespace(nsp);
     }
 
     leaveNamespace(): void {
@@ -114,13 +116,13 @@ export class SocketIO extends Common {
 
 export function serialize(data: any): any {
     switch (typeof data) {
-        case "string":
-        case "boolean":
-        case "number": {
+        case 'string':
+        case 'boolean':
+        case 'number': {
             return data;
         }
 
-        case "object": {
+        case 'object': {
             if (data instanceof Date) {
                 return data.toJSON();
             }
@@ -141,11 +143,12 @@ export function serialize(data: any): any {
             return NSDictionary.dictionaryWithDictionary(node);
         }
 
-        default: return NSNull.new();
+        default:
+            return NSNull.new();
     }
 }
 
-export function deserialize(data: any): any {
+export function deserialize(data): any {
     if (data instanceof NSNull) {
         return null;
     }
