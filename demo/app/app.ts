@@ -1,5 +1,5 @@
 ﻿import { getResources, setResources, run } from 'tns-core-modules/application';
-import moment = require('moment');
+import * as moment from 'moment';
 
 
 
