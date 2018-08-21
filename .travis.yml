@@ -52,7 +52,7 @@ matrix:
         - nvm install 8
       script:
         - cd demo-server && node app&
-        - cd ../src && npm run test.android
+        - cd src && npm run test.android
     - os: osx
       language: node_js
       node_js: "8"
@@ -60,7 +60,7 @@ matrix:
       osx_image: xcode9.3
       script:
         - cd demo-server && node app&
-        - cd ../src && npm run test.ios
+        - cd src && npm run test.ios
 
 android:
   components:
