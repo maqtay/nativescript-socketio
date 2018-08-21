@@ -1,6 +1,5 @@
-import { Common } from './socketio-common';
-
-declare const io: any, org: any;
+import { Common } from './socketio.common';
+declare const io: any, org: any, android: any, java: any, co: any;
 
 export class SocketIO extends Common {
     protected socket: any;
@@ -12,7 +11,34 @@ export class SocketIO extends Common {
         switch (args.length) {
             case 2: {
                 let opts = new io.socket.client.IO.Options();
-                Object.assign(opts, args[1]);
+                opts.multiplex = true;
+                const options = args[1];
+                const keys = Object.keys(options);
+                for (let key of keys) {
+                    if (key === 'query') {
+                        const query = options[key];
+                        if (typeof query === 'object') {
+                            const queryKeys = Object.keys(query);
+                            const uri = android.net.Uri.parse(args[0]);
+                            const uriBuilder = uri.buildUpon();
+                            for (let queryKey of queryKeys) {
+                                const value = `${query[queryKey]}`;
+                                uriBuilder.appendQueryParameter(queryKey, value);
+                            }
+                            opts.query = uriBuilder.build().getQuery();
+                        } else if (typeof query === 'string') {
+                            opts.query = query;
+                        }
+                    } else if (key === 'debug') {
+                        co.fitcom.fancylogger.FancyLogger.reset(new co.fitcom.fancylogger.FancyLogger());
+
+                        java.util.logging.Logger.getLogger(io.socket.client.Socket.class.getName()).setLevel(java.util.logging.Level.FINEST);
+                        java.util.logging.Logger.getLogger(io.socket.engineio.client.Socket.class.getName()).setLevel(java.util.logging.Level.FINEST);
+                        java.util.logging.Logger.getLogger(io.socket.client.Manager.class.getName()).setLevel(java.util.logging.Level.FINEST);
+                    } else {
+                        opts[key] = options[key];
+                    }
+                }
                 this.socket = io.socket.client.IO.socket(args[0], opts);
                 break;
             }
@@ -21,16 +47,20 @@ export class SocketIO extends Common {
                 this.socket = args.pop();
                 break;
             }
-
-            default:
+            default: {
+                let opts = new io.socket.client.IO.Options();
+                opts.multiplex = true;
+                this.socket = io.socket.client.IO.socket(args[0], opts);
+                break;
+            }
         }
     }
 
-    connect(){
+    connect() {
         this.socket.connect();
     }
 
-    disconnect(){
+    disconnect() {
         this.socket.disconnect();
     }
 
@@ -60,6 +90,34 @@ export class SocketIO extends Common {
                 callback.apply(null, payload);
             }
         }));
+    }
+
+    once(event: string, callback: (...payload) => void) {
+        this.socket.once(event, new io.socket.emitter.Emitter.Listener({
+            call(args) {
+                let payload = Array.prototype.slice.call(args);
+                let ack = payload.pop();
+                if (ack && !(ack.getClass().getName().indexOf('io.socket.client.Socket') === 0 && ack.call)) {
+                    payload.push(ack);
+                    ack = null;
+                }
+
+                payload = payload.map(deserialize);
+
+                if (ack) {
+                    const _ack = function () {
+                        let _args = Array.prototype.slice.call(arguments);
+                        ack.call(_args.map(serialize));
+                    };
+                    payload.push(_ack);
+                }
+                callback.apply(null, payload);
+            }
+        }));
+    }
+
+    off(event: string) {
+        this.socket.off(event);
     }
 
     emit(event: string, ...payload: any[]) {
@@ -92,22 +150,23 @@ export class SocketIO extends Common {
         this.socket.emit(event, final);
     }
 
-    joinNamespace(nsp: string): void {
-        if (this.socket.connected()) {
-            const manager = this.socket.io();
-            this.socket = manager.socket(nsp);
+    joinNamespace(nsp: string): SocketIO {
+        const manager = this.socket.io();
 
+        const socket = manager.socket(nsp);
+        const namespaceSocket = new SocketIO(null, null, socket);
+        if (this.socket.connected()) {
             // Only join if currently connected. Otherwise just configure to join on connect.
             // This mirrors IOS behavior
-            this.socket.connect();
-        } else {
-            const manager = this.socket.io();
-            this.socket = manager.socket(nsp);
+            namespaceSocket.connect();
         }
+        return namespaceSocket;
     }
 
     leaveNamespace(): void {
-        // Not Implemented
+        if (this.socket) {
+            this.socket.disconnect();
+        }
     }
 }
 

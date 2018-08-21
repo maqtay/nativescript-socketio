@@ -1,7 +1,6 @@
-<Page xmlns="http://schemas.nativescript.org/tns.xsd" loaded="pageLoaded" navigatingTo="navigatingTo">
-
-    <StackLayout height="100%">
-      <TextField verticalAlignment="center" hint="Enter username" text="{{ username }}" />
-      <Button verticalAlignment="center" text="Join" tap="join"  visibility="{{ isSet }}"/>
-</StackLayout>
-</Page>
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" loaded="pageLoaded">
+        <StackLayout height="100%">
+            <TextField verticalAlignment="center" hint="Enter username" text="{{ username }}"/>
+            <Button verticalAlignment="center" text="Join" tap="join" visibility="{{ isSet }}"/>
+        </StackLayout>
+    </Page>

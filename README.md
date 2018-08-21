@@ -1,4 +1,4 @@
-﻿[![npm](https://img.shields.io/npm/v/nativescript-socketio.svg)](https://www.npmjs.com/package/nativescript-socketio)
+[![npm](https://img.shields.io/npm/v/nativescript-socketio.svg)](https://www.npmjs.com/package/nativescript-socketio)
 [![npm](https://img.shields.io/npm/dt/nativescript-socketio.svg?label=npm%20downloads)](https://www.npmjs.com/package/nativescript-socketio)
 # nativescript-socketio
 # Usage

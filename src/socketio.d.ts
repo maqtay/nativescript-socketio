@@ -1,1 +1,1 @@
-export * from "./socketio.android";
+export * from './socketio.android';

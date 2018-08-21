@@ -1,6 +1,10 @@
-screenshots
-.gitignore
+*.map
 *.ts
 !*.d.ts
-*.png
-*.log
+tsconfig.json
+scripts/*
+platforms/android/*
+!platforms/android/include.gradle
+!platforms/android/*.aar
+!platforms/android/*.jar
+typings

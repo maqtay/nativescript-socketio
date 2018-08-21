@@ -1,8 +1,10 @@
-import { Common } from './socketio-common';
+import { Common } from './socketio.common';
+
+declare const SocketManager: any, NSURLComponents: any, NSURLQueryItem: any, NSURL: any, NSArray: any, NSDictionary: any, NSNull: any, SocketIOStatus: any;
 
 export class SocketIO extends Common {
-    protected socket: SocketIOClient;
-    manager: SocketManager;
+    protected socket: any;
+    manager: any;
 
     /**
      * Class Constructor
@@ -13,18 +15,28 @@ export class SocketIO extends Common {
         super();
 
         let opts = {} as any;
+        let urlComponent = NSURLComponents.alloc().initWithString(args[0]);
         switch (args.length) {
-            case 1: {
-                this.manager = SocketManager.alloc().initWithSocketURLConfig(NSURL.URLWithString(args[0]),
-                    opts);
-                this.socket = this.manager.defaultSocket;
-                break;
-            }
-            case 2: {
+            case 2:
                 const keys = Object.keys(args[1]);
-                keys.forEach((key, index) => {
+                keys.forEach((key) => {
                     if (key === 'query') {
-                        Object.assign(opts, {connectParams: args[1][key]});
+                        const query = args[1][key];
+                        if (typeof query === 'object') {
+                            const queryKeys = Object.keys(query);
+                            for (let queryKey of queryKeys) {
+                                const value = query[queryKey];
+                                const queryItem = NSURLQueryItem.queryItemWithNameValue(queryKey, value ? value : '');
+                                if (urlComponent.queryItems) {
+                                    urlComponent.queryItems = urlComponent.queryItems.arrayByAddingObject(queryItem);
+                                }
+                            }
+                            Object.assign(opts, {connectParams: urlComponent.query});
+                        } else if (typeof query === 'string') {
+                            Object.assign(opts, {connectParams: `${urlComponent.query}&${query}`});
+                        }
+                    } else if (key === 'debug') {
+                        opts['log'] = true;
                     } else {
                         opts[key] = serialize(args[1][key]);
                     }
@@ -33,15 +45,22 @@ export class SocketIO extends Common {
                     opts);
                 this.socket = this.manager.defaultSocket;
                 break;
-            }
-
-            case 3: {
+            case 3:
                 const s = args.pop();
                 this.manager = args.pop().manager;
                 this.socket = s;
                 break;
-            }
             default:
+                if (urlComponent.queryItems) {
+                    Object.assign(opts, {
+                        connectParams: urlComponent.query
+                    });
+                }
+
+                this.manager = SocketManager.alloc().initWithSocketURLConfig(NSURL.URLWithString(args[0]),
+                    opts);
+                this.socket = this.manager.defaultSocket;
+                break;
         }
     }
 
@@ -54,15 +73,15 @@ export class SocketIO extends Common {
     }
 
     get connected(): boolean {
-        return this.socket && this.socket.manager.engine.connected;
+        return this.socket.status === SocketIOStatus.Connected;
     }
 
     on(event: string, callback: (...payload) => void): void {
         this.socket.onCallback(event, (data, ack) => {
             const d = deserialize(data);
-            if(Array.isArray(d)){
+            if (Array.isArray(d)) {
                 data = d[0];
-            }else{
+            } else {
                 data = d;
             }
 
@@ -72,6 +91,27 @@ export class SocketIO extends Common {
                 callback(data);
             }
         });
+    }
+
+    once(event: string, callback: (...payload) => void): void {
+        this.socket.onceCallback(event, (data, ack) => {
+            const d = deserialize(data);
+            if (Array.isArray(d)) {
+                data = d[0];
+            } else {
+                data = d;
+            }
+
+            if (ack) {
+                callback(data, ack);
+            } else {
+                callback(data);
+            }
+        });
+    }
+
+    off(event: string) {
+        this.socket.off(event);
     }
 
     emit(event: string, ...payload: any[]): void {
@@ -89,7 +129,7 @@ export class SocketIO extends Common {
         }
 
         // Serialize Emit
-        const final = (<any>payload).map(serialize) as NSArray<any>;
+        const final = (<any>payload).map(serialize);
 
         if (ack) {
             const _ack = function (args) {
@@ -105,8 +145,8 @@ export class SocketIO extends Common {
         }
     }
 
-    joinNamespace(nsp: string): void {
-        this.socket.manager.socketForNamespace(nsp);
+    joinNamespace(nsp: string): SocketIO {
+        return new SocketIO(null, null, this.socket.manager.socketForNamespace(nsp));
     }
 
     leaveNamespace(): void {
@@ -132,10 +172,10 @@ export function serialize(data: any): any {
             }
 
             if (Array.isArray(data)) {
-                return NSArray.arrayWithArray((<any>data).map(serialize) as NSArray<any>);
+                return NSArray.arrayWithArray((<any>data).map(serialize));
             }
 
-            let node = {} as NSDictionary<string, any>;
+            let node = {} as any;
             Object.keys(data).forEach(function (key) {
                 let value = data[key];
                 node[key] = serialize(value);

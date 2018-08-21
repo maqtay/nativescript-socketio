@@ -1,9 +1,11 @@
-﻿import { start, getResources, setResources } from "tns-core-modules/application/application";
-import moment = require("moment");
+﻿import { getResources, setResources, run } from 'tns-core-modules/application';
+import moment = require('moment');
 
-start({ moduleName: "login" });
+
 
 const resources = getResources();
-resources["timeFromNow"] = (date) => moment(date).fromNow();
+resources['timeFromNow'] = (date) => moment(date).fromNow();
 
 setResources(resources);
+
+run({moduleName: 'app-root'});

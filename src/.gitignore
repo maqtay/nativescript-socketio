@@ -1,6 +1,0 @@
-*.js
-*.js.map
-*.log
-*.metadata.json
-node_modules
-platforms/android/src

@@ -1,7 +1,7 @@
-import { ModuleWithProviders, InjectionToken } from "@angular/core";
+import { InjectionToken, ModuleWithProviders } from '@angular/core';
 export interface IOOptions {
     compress: boolean;
-    connectParams: {
+    query: {
         [key: string]: any;
     };
     cookies: string[];

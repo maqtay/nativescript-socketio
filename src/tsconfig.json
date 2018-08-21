@@ -1,7 +1,5 @@
 {
     "compilerOptions": {
-        "rootDir": ".",
-        "skipLibCheck": true,
         "target": "es5",
         "module": "commonjs",
         "declaration": true,
@@ -9,19 +7,7 @@
         "noLib": false,
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
-        "lib": [
-            "es6",
-            "dom",
-            "es2016.array.include",
-            "es2015.iterable"
-        ],
-        "baseUrl": ".",
-        "paths": {
-            "*": [
-                "./node_modules/tns-core-modules/*",
-                "./node_modules/*"
-            ]
-        },
+        "lib": ["es6", "dom"],
         "sourceMap": true,
         "pretty": true,
         "allowUnreachableCode": false,
@@ -31,16 +17,21 @@
         "noImplicitAny": false,
         "noImplicitReturns": true,
         "noImplicitUseStrict": false,
-        "noFallthroughCasesInSwitch": true,
-        "typeRoots": [
-            "./node_modules/@types",
-            "./node_modules"
-        ],
-        "types": []
+        "noFallthroughCasesInSwitch": true
     },
     "exclude": [
-        "platform",
-        "node_modules"
+        "node_modules",
+        "typings"
     ],
-    "compileOnSave": false
+    "files": [
+        "angular/index.ts",
+        "index.ts",
+        "socketio.android.ts",
+        "socketio.ios.ts",
+        "socketio.common.ts"
+    ],
+    "compileOnSave": false,
+    "angularCompilerOptions": {
+        "skipTemplateCodegen": true
+    }
 }

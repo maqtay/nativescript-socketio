@@ -5,17 +5,18 @@ const server = require('http').createServer(app)
 const io = require('socket.io')(server)
 
 const nspChat = io.of('/chat')
-const nspDefault = io.nsps[ '/' ]
+const nspDefault = io.nsps[ '/' ];
 
 let messageList = []
 let userList = []
 
 io.on('connection', function (socket) {
 	console.log('User Connected')
-	socket.emit('connected', 'Welcom')
+	socket.emit('connected', 'Welcome')
 	let addedUser = false
 
-	socket.on('add user', function (data) {
+	console.log('connection query params', socket.handshake.query);
+	socket.on('add user', function (data, cb) {
 		if (addedUser) return
 		addedUser = true
 		socket.username = data.username
@@ -24,7 +25,9 @@ io.on('connection', function (socket) {
 		socket.emit('login', { userList: userList })
 		socket.broadcast.emit('user joined', {
 			username: data.username
-		})
+		});
+		cb(true);
+		console.log('add user ack');
 	})
 
 	socket.on('new message', function (data, cb) {
