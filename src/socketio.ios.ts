@@ -1,6 +1,7 @@
 import { Common } from './socketio.common';
 
-declare const SocketManager: any, NSURLComponents: any, NSURLQueryItem: any, NSURL: any, NSArray: any, NSDictionary: any, NSNull: any, SocketIOStatus: any;
+declare const SocketManager: any, NSURLComponents: any, NSURLQueryItem: any, NSURL: any, NSArray: any,
+    NSDictionary: any, NSNull: any, SocketIOStatus: any;
 
 export class SocketIO extends Common {
     protected socket: any;
@@ -15,9 +16,10 @@ export class SocketIO extends Common {
         super();
 
         let opts = {} as any;
-        let urlComponent = NSURLComponents.alloc().initWithString(args[0]);
+        let urlComponent;
         switch (args.length) {
             case 2:
+                urlComponent = NSURLComponents.alloc().initWithString(args[0]);
                 const keys = Object.keys(args[1]);
                 keys.forEach((key) => {
                     if (key === 'query') {
@@ -47,10 +49,11 @@ export class SocketIO extends Common {
                 break;
             case 3:
                 const s = args.pop();
-                this.manager = args.pop().manager;
+                this.manager = s.manager;
                 this.socket = s;
                 break;
             default:
+                urlComponent =  NSURLComponents.alloc().initWithString(args[0]);
                 if (urlComponent.queryItems) {
                     Object.assign(opts, {
                         connectParams: urlComponent.query
@@ -78,7 +81,7 @@ export class SocketIO extends Common {
 
     on(event: string, callback: (...payload) => void): void {
         this.socket.onCallback(event, (data, ack) => {
-            const d = deserialize(data);
+           const d = deserialize(data);
             if (Array.isArray(d)) {
                 data = d[0];
             } else {
@@ -146,7 +149,7 @@ export class SocketIO extends Common {
     }
 
     joinNamespace(nsp: string): SocketIO {
-        return new SocketIO(null, null, this.socket.manager.socketForNamespace(nsp));
+        return new SocketIO(null, null, this.manager.socketForNamespace(nsp));
     }
 
     leaveNamespace(): void {

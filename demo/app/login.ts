@@ -10,15 +10,11 @@ let socketIO: SocketIO, pageData = fromObject({
 
 const server = isAndroid ? 'http://10.0.2.2:3001' : 'http://localhost:3001';
 
+let chatNS;
 
 export function pageLoaded(args) {
 
-    socketIO = new SocketIO(server, {
-        debug: true,
-        query: {
-            timeStamp: Date.now()
-        }
-    });
+    socketIO = new SocketIO(server, {});
 
     socketIO.on('login', function (data) {
         console.log('Login');
@@ -31,7 +27,10 @@ export function pageLoaded(args) {
 
     socketIO.connect();
 
-     socketIO.joinNamespace('/chat').connect();
+    chatNS = socketIO.joinNamespace('/chat');
+    if (chatNS && !chatNS.connected) {
+        chatNS.connect();
+    }
 
     let page = args.object;
 

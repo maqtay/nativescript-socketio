@@ -11,6 +11,7 @@ describe('SocketIO functions', function () {
 		socketio.connect();
 		setTimeout(function () {
 			expect(socketio.connected).toBe(true);
+			done();
 		}, 3000);
 	});
 
@@ -20,14 +21,9 @@ describe('SocketIO functions', function () {
 		});
 
 		socketio.emit('add user',{username:'test-user'}, function (ack) {
-			if (ack) {
-				expect(ack).toBe(true);
-			} else {
-				fail('Failed to get ack');
-			}
+			expect(ack).toBe(true);
 		});
 	});
-
 
 	it('tests joining namespace', function () {
 		var chatNS = socketio.joinNamespace('/chat');
@@ -38,8 +34,10 @@ describe('SocketIO functions', function () {
 		// check if connected
 		setTimeout(function(){
 			expect(chatNS.connected).toBe(true);
-		},1500)
+			done()
+		},3000)
 	});
+
 
 
 	it('tests disconnecting', function () {
