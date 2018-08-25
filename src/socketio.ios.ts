@@ -25,7 +25,7 @@ export class SocketIO extends Common {
                 const obj = args[1];
                 const keys = Object.keys(obj);
 
-                count = urlComponent.queryItems.count;
+                count = urlComponent.queryItems ? urlComponent.queryItems.count : 0;
                 for (let i = 0; i < count; i++) {
                     const component = urlComponent.queryItems.objectAtIndex(i);
                     const componentObj = {};
@@ -84,7 +84,7 @@ export class SocketIO extends Common {
             default:
                 urlComponent = NSURLComponents.alloc().initWithString(args[0]);
 
-                count = urlComponent.queryItems.count;
+                count = urlComponent.queryItems ? urlComponent.queryItems.count : 0;
                 for (let i = 0; i < count; i++) {
                     const component = urlComponent.queryItems.objectAtIndex(i);
                     const componentObj = {};
