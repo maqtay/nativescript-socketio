@@ -15,6 +15,7 @@ export function navigatingTo(args: NavigatedData) {
     context = page.navigationContext;
     pageData.set('currentUser', context.username);
     socketIO = new SocketIO(null, null, context.socket);
+
     socketIO.on('new message', function (data) {
         pageData.list.push(data);
         console.log(JSON.stringify(data));

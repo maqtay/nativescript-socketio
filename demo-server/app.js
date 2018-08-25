@@ -11,18 +11,18 @@ let messageList = []
 let userList = []
 
 io.on('connection', function (socket) {
-	console.log('User Connected')
-	socket.emit('connected', 'Welcome')
-	let addedUser = false
+	console.log('User Connected');
+	socket.emit('connected', 'Welcome');
+	let addedUser = false;
 
 	console.log('connection query params', socket.handshake.query);
 	socket.on('add user', function (data, cb) {
-		if (addedUser) return
-		addedUser = true
-		socket.username = data.username
-		console.log('Username: ', data.username)
-		userList.push({ username: data.username })
-		socket.emit('login', { userList: userList })
+		if (addedUser) return;
+		addedUser = true;
+		socket.username = data.username;
+		console.log('Username: ', data.username);
+		userList.push({ username: data.username });
+		socket.emit('login', { userList: userList });
 		socket.broadcast.emit('user joined', {
 			username: data.username
 		});

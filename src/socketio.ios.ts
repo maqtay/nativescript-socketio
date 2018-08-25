@@ -1,6 +1,6 @@
 import { Common } from './socketio.common';
 
-declare const SocketManager: any, NSURLComponents: any, NSURLQueryItem: any, NSURL: any, NSArray: any,
+declare var SocketManager: any, NSURLComponents: any, NSURL: any, NSArray: any,
     NSDictionary: any, NSNull: any, SocketIOStatus: any;
 
 export class SocketIO extends Common {
@@ -17,32 +17,61 @@ export class SocketIO extends Common {
 
         let opts = {} as any;
         let urlComponent;
+        let count;
+        let connectParams = {};
         switch (args.length) {
             case 2:
                 urlComponent = NSURLComponents.alloc().initWithString(args[0]);
-                const keys = Object.keys(args[1]);
+                const obj = args[1];
+                const keys = Object.keys(obj);
+
+                count = urlComponent.queryItems.count;
+                for (let i = 0; i < count; i++) {
+                    const component = urlComponent.queryItems.objectAtIndex(i);
+                    const componentObj = {};
+                    componentObj[component.name] = component.value;
+                    Object.assign(connectParams, componentObj);
+                }
+
                 keys.forEach((key) => {
                     if (key === 'query') {
-                        const query = args[1][key];
+                        let query = obj[key];
                         if (typeof query === 'object') {
                             const queryKeys = Object.keys(query);
                             for (let queryKey of queryKeys) {
                                 const value = query[queryKey];
-                                const queryItem = NSURLQueryItem.queryItemWithNameValue(queryKey, value ? value : '');
-                                if (urlComponent.queryItems) {
-                                    urlComponent.queryItems = urlComponent.queryItems.arrayByAddingObject(queryItem);
-                                }
+                                Object.assign(connectParams, {
+                                    [queryKey]: value
+                                });
                             }
-                            Object.assign(opts, {connectParams: urlComponent.query});
                         } else if (typeof query === 'string') {
-                            Object.assign(opts, {connectParams: `${urlComponent.query}&${query}`});
+                            if (query.startsWith('?')) {
+                                query = query.replace('?', '');
+                            }
+
+                            const optionsQuery = query
+                                .split('&')
+                                .map(p => p.split('='))
+                                .reduce((obj, pair) => {
+                                    const [key, value] = pair.map(decodeURIComponent);
+                                    return ({...obj, [key]: value});
+                                }, {});
+
+                            Object.assign(connectParams, optionsQuery);
+
                         }
                     } else if (key === 'debug') {
                         opts['log'] = true;
                     } else {
-                        opts[key] = serialize(args[1][key]);
+                        opts[key] = serialize(obj[key]);
                     }
                 });
+                if (opts.connectParams === null) {
+                    delete opts.connectParams;
+                }
+
+                Object.assign(opts, {connectParams: connectParams});
+
                 this.manager = SocketManager.alloc().initWithSocketURLConfig(NSURL.URLWithString(args[0]),
                     opts);
                 this.socket = this.manager.defaultSocket;
@@ -53,10 +82,19 @@ export class SocketIO extends Common {
                 this.socket = s;
                 break;
             default:
-                urlComponent =  NSURLComponents.alloc().initWithString(args[0]);
+                urlComponent = NSURLComponents.alloc().initWithString(args[0]);
+
+                count = urlComponent.queryItems.count;
+                for (let i = 0; i < count; i++) {
+                    const component = urlComponent.queryItems.objectAtIndex(i);
+                    const componentObj = {};
+                    componentObj[component.name] = component.value;
+                    Object.assign(connectParams, componentObj);
+                }
+
                 if (urlComponent.queryItems) {
                     Object.assign(opts, {
-                        connectParams: urlComponent.query
+                        connectParams: connectParams
                     });
                 }
 
@@ -81,7 +119,7 @@ export class SocketIO extends Common {
 
     on(event: string, callback: (...payload) => void): void {
         this.socket.onCallback(event, (data, ack) => {
-           const d = deserialize(data);
+            const d = deserialize(data);
             if (Array.isArray(d)) {
                 data = d[0];
             } else {

@@ -8,9 +8,10 @@ let socketIO: SocketIO, pageData = fromObject({
     username: 'Osei'
 });
 
-const server = isAndroid ? 'http://10.0.2.2:3001' : 'http://localhost:3001';
+const server = isAndroid ? 'http://10.0.2.2:3001?test=123&platform=android' : 'http://localhost:3001?test=123&platform=ios';
 
 let chatNS;
+
 
 export function pageLoaded(args) {
 
@@ -31,6 +32,7 @@ export function pageLoaded(args) {
     if (chatNS && !chatNS.connected) {
         chatNS.connect();
     }
+
 
     let page = args.object;
 
