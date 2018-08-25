@@ -23,7 +23,7 @@ matrix:
       script: cd demo && npm run build.plugin && npm i && tns build android --bundle --env.uglify --env.snapshot
     - stage: "Build"
       os: linux
-    - language: android
+      language: android
       env:
         - BuildAndroid="27"
       jdk: oraclejdk8
