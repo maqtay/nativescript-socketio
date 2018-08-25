@@ -40,7 +40,7 @@ matrix:
       jdk: oraclejdk8
       script:
         - cd src && npm i && npm run tsc && cd ../demo && tns build ios
-    - stage: "Build"
+    - stage: "Test"
       os: linux
       language: android
       jdk: oraclejdk8
