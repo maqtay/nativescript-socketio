@@ -5,7 +5,7 @@ matrix:
       os: linux
       node_js: "8"
       script: cd src && npm run ci.tslint && cd ../demo && npm run ci.tslint
-    - stage: "WebPack, Build and Test"
+    - stage: "WebPack"
       os: osx
       env:
         - WebPack="iOS"
@@ -21,6 +21,7 @@ matrix:
       jdk: oraclejdk8
       before_install: nvm install 8
       script: cd demo && npm run build.plugin && npm i && tns build android --bundle --env.uglify --env.snapshot
+    - stage: "Build"
     - language: android
       env: 
         - BuildAndroid="27"
@@ -39,6 +40,7 @@ matrix:
       jdk: oraclejdk8
       script: 
         - cd src && npm i && npm run tsc && cd ../demo && tns build ios
+    - stage: "Test"
     - os: linux
       language: android
       dist: precise
