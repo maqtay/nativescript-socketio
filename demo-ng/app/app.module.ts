@@ -1,14 +1,14 @@
-import { NgModule, NO_ERRORS_SCHEMA } from "@angular/core";
-import { NativeScriptModule } from "nativescript-angular/nativescript.module";
-import { AppRoutingModule } from "./app.routing";
-import { AppComponent } from "./app.component";
+import { NgModule, NO_ERRORS_SCHEMA } from '@angular/core';
+import { NativeScriptModule } from 'nativescript-angular/nativescript.module';
+import { AppRoutingModule } from './app.routing';
+import { AppComponent } from './app.component';
 
-import { LoginComponent } from "./login/login.component";
-import { MainPageComponent } from "./main-page/main-page.component";
+import { LoginComponent } from './login/login.component';
+import { MainPageComponent } from './main-page/main-page.component';
 
-import { SocketIOModule } from "nativescript-socketio/angular";
-import { isAndroid } from "tns-core-modules/platform/platform";
-import { TimeFromNow } from "./timeFromNow.pipe";
+import { SocketIOModule } from 'nativescript-socketio/angular';
+import { isAndroid } from 'tns-core-modules/platform/platform';
+import { TimeFromNow } from './timeFromNow.pipe';
 
 // Uncomment and add to NgModule imports if you need to use two-way binding
 // import { NativeScriptFormsModule } from "nativescript-angular/forms";
@@ -16,7 +16,7 @@ import { TimeFromNow } from "./timeFromNow.pipe";
 // Uncomment and add to NgModule imports  if you need to use the HTTP wrapper
 // import { NativeScriptHttpModule } from "nativescript-angular/http";
 
-const server = isAndroid ? "http://10.0.2.2:3001" : "http://localhost:3001";
+const server = isAndroid ? 'http://10.0.2.2:3001?test=123&platform=android' : 'http://localhost:3001?test=123&platform=ios';
 
 @NgModule({
     bootstrap: [
@@ -33,8 +33,7 @@ const server = isAndroid ? "http://10.0.2.2:3001" : "http://localhost:3001";
         LoginComponent,
         MainPageComponent
     ],
-    providers: [
-    ],
+    providers: [],
     schemas: [
         NO_ERRORS_SCHEMA
     ]
@@ -42,4 +41,5 @@ const server = isAndroid ? "http://10.0.2.2:3001" : "http://localhost:3001";
 /*
 Pass your application module to the bootstrapModule function located in main.ts to start your app
 */
-export class AppModule { }
+export class AppModule {
+}

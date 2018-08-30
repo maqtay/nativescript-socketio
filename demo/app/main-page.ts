@@ -3,14 +3,17 @@ import { ObservableArray } from 'tns-core-modules/data/observable-array';
 import { NavigatedData, Page } from 'tns-core-modules/ui/page';
 import { topmost } from 'tns-core-modules/ui/frame';
 import { SocketIO } from 'nativescript-socketio';
+import { ActionItem } from 'tns-core-modules/ui/action-bar';
 
-let socketIO: SocketIO, page, context, pageData: any = fromObject({
+let socketIO: SocketIO, page: Page, context, pageData: any = fromObject({
     list: new ObservableArray(),
     textMessage: '',
     currentUser: ''
 });
 
-export function navigatingTo(args: NavigatedData) {
+
+export function pageLoaded(args: NavigatedData) {
+
     page = <Page>args.object;
     context = page.navigationContext;
     pageData.set('currentUser', context.username);
@@ -23,7 +26,7 @@ export function navigatingTo(args: NavigatedData) {
 
     socketIO.on('disconnect', function () {
         // pageData.list.push.length = 0;
-        topmost().navigate('login');
+        topmost().navigate('login-page');
     });
 
     socketIO.on('getMessages', function (data) {
@@ -38,9 +41,7 @@ export function navigatingTo(args: NavigatedData) {
         }
 
     });
-}
 
-export function pageLoaded(args: NavigatedData) {
     page.bindingContext = pageData;
     socketIO.emit('getMessages');
 }
@@ -63,6 +64,6 @@ export function sendText() {
 
 }
 
-export function logout() {
+export function logOut(args) {
     socketIO.disconnect();
 }

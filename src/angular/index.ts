@@ -2,19 +2,20 @@ import { InjectionToken, ModuleWithProviders, NgModule } from '@angular/core';
 import { SocketIO } from '../socketio';
 
 export interface IOOptions {
-    compress: boolean;
-    query: { [key: string]: any };
-    cookies: string[];
-    extraHeaders: { [key: string]: any };
-    forceNew: boolean;
-    forcePolling: boolean;
-    forceWebsockets: boolean;
-    log: boolean;
-    path: string;
-    reconnects: boolean;
-    reconnectAttempts: number;
-    reconnectWait: number; // Time in milli seconds
-    secure: boolean;
+    compress?: boolean;
+    debug?: boolean;
+    query?: { [key: string]: any };
+    cookies?: string[];
+    extraHeaders?: { [key: string]: any };
+    forceNew?: boolean;
+    forcePolling?: boolean;
+    forceWebsockets?: boolean;
+    log?: boolean;
+    path?: string;
+    reconnects?: boolean;
+    reconnectAttempts?: number;
+    reconnectWait?: number; // Time in milli seconds
+    secure?: boolean;
 }
 
 export type SocketIOOptions = Partial<IOOptions>;

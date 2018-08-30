@@ -35,6 +35,8 @@ export class LoginComponent implements OnInit {
 
     join(username) {
         this.username = username;
-        this.socketIO.emit('add user', {username});
+        this.socketIO.emit('add user', {username}, (ack) => {
+            console.log('ack', ack);
+        });
     }
 }

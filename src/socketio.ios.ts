@@ -106,7 +106,9 @@ export class SocketIO extends Common {
     }
 
     connect() {
-        this.socket.connect();
+        if (!this.connected) {
+            this.socket.connect();
+        }
     }
 
     disconnect() {

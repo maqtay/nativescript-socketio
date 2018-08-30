@@ -1,11 +1,3 @@
-﻿import { getResources, setResources, run } from 'tns-core-modules/application';
-import * as moment from 'moment';
+﻿import * as application from 'tns-core-modules/application';
 
-
-
-const resources = getResources();
-resources['timeFromNow'] = (date) => moment(date).fromNow();
-
-setResources(resources);
-
-run({moduleName: 'app-root'});
+application.run({moduleName: 'app-root'});
