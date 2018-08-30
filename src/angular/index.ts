@@ -23,7 +23,7 @@ export type SocketIOOptions = Partial<IOOptions>;
 export const SOCKETIO_URL = new InjectionToken<string>('SOCKETIO_URL');
 export const SOCKETIO_OPTIONS = new InjectionToken<SocketIOOptions>('SOCKETIO_OPTIONS');
 
-function socketIOFactory(url: string, options: SocketIOOptions) {
+export function socketIOFactory(url: string, options: SocketIOOptions) {
     return new SocketIO(url, options);
 }
 

@@ -7,7 +7,7 @@ import { LoginComponent } from './login/login.component';
 import { MainPageComponent } from './main-page/main-page.component';
 
 import { SocketIOModule } from 'nativescript-socketio/angular';
-import { isAndroid } from 'tns-core-modules/platform/platform';
+import { server } from './environment';
 import { TimeFromNow } from './timeFromNow.pipe';
 
 // Uncomment and add to NgModule imports if you need to use two-way binding
@@ -15,8 +15,6 @@ import { TimeFromNow } from './timeFromNow.pipe';
 
 // Uncomment and add to NgModule imports  if you need to use the HTTP wrapper
 // import { NativeScriptHttpModule } from "nativescript-angular/http";
-
-const server = isAndroid ? 'http://10.0.2.2:3001?test=123&platform=android' : 'http://localhost:3001?test=123&platform=ios';
 
 @NgModule({
     bootstrap: [
