@@ -29,14 +29,14 @@ matrix:
     language: node_js
     node_js: "8"
     jdk: oraclejdk8
-    script: cd demo-ng && npm run build.plugin && npm i && tns build ios --bundle --env.uglify
+    script: cd demo-ng && npm run build.plugin && npm i && tns build ios --bundle --env.uglify --env.aot
   - language: android
     os: linux
     env:
     - WebPack="Android"
     jdk: oraclejdk8
     before_install: nvm install 8
-    script: cd demo-ng && npm run build.plugin && npm i && tns build android --bundle --env.uglify --env.snapshot
+    script: cd demo-ng && npm run build.plugin && npm i && tns build android --bundle --env.uglify --env.snapshot --env.aot
   - stage: "Build"
     os: linux
     language: android
