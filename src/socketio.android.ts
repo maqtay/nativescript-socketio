@@ -30,7 +30,7 @@ export class SocketIO extends Common {
                         } else if (typeof query === 'string') {
                             opts.query = query;
                         }
-                    } else if (key === 'debug') {
+                    } else if (key === 'debug' && options[key]) {
                         co.fitcom.fancylogger.FancyLogger.reset(new co.fitcom.fancylogger.FancyLogger());
 
                         java.util.logging.Logger.getLogger(io.socket.client.Socket.class.getName()).setLevel(java.util.logging.Level.FINEST);
@@ -217,7 +217,7 @@ export function deserialize(data): any {
         }
 
         case 'java.lang.Boolean': {
-            return Boolean(data);
+            return String(data) === 'true';
         }
 
         case 'java.lang.Integer':

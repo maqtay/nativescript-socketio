@@ -60,7 +60,7 @@ export class SocketIO extends Common {
                             Object.assign(connectParams, optionsQuery);
 
                         }
-                    } else if (key === 'debug') {
+                    } else if (key === 'debug' && obj[key]) {
                         opts['log'] = true;
                     } else {
                         opts[key] = serialize(obj[key]);
