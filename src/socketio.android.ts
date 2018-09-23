@@ -250,3 +250,9 @@ export function deserialize(data): any {
     }
     return store;
 }
+
+export function connect(uri: string, options?: any): SocketIO {
+    let socketio = new SocketIO(uri, options || {});
+    socketio.connect();
+    return socketio;
+}

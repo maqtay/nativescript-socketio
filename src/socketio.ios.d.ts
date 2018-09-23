@@ -15,3 +15,4 @@ export declare class SocketIO extends Common {
 }
 export declare function serialize(data: any): any;
 export declare function deserialize(data: any): any;
+export declare function connect(uri: string, options?: any): SocketIO;
