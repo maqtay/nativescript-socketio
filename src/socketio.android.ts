@@ -192,7 +192,7 @@ export function serialize(data: any): any {
             }
             if (Array.isArray(data)) {
                 store = new org.json.JSONArray();
-                data.forEach((item) => store.put(item));
+                data.forEach((item) => store.put(serialize(item)));
                 return store;
             }
             store = new org.json.JSONObject();
