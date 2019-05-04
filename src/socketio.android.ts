@@ -71,8 +71,8 @@ export class SocketIO extends Common {
         return this.socket && this.socket.connected();
     }
 
-    on(event: string, callback: (...payload) => void) {
-        this.socket.on(event, new io.socket.emitter.Emitter.Listener({
+    on(event: string, callback: (...payload) => void): () => void {
+        const listener = new io.socket.emitter.Emitter.Listener({
             call(args) {
                 let payload = Array.prototype.slice.call(args);
                 let ack = payload.pop();
@@ -92,11 +92,17 @@ export class SocketIO extends Common {
                 }
                 callback.apply(null, payload);
             }
-        }));
+        });
+
+        this.socket.on(event, listener);
+
+        return () => {
+            this.socket.off(event, listener);
+        };
     }
 
-    once(event: string, callback: (...payload) => void) {
-        this.socket.once(event, new io.socket.emitter.Emitter.Listener({
+    once(event: string, callback: (...payload) => void): () => void {
+        const listener = new io.socket.emitter.Emitter.Listener({
             call(args) {
                 let payload = Array.prototype.slice.call(args);
                 let ack = payload.pop();
@@ -116,7 +122,12 @@ export class SocketIO extends Common {
                 }
                 callback.apply(null, payload);
             }
-        }));
+        });
+        this.socket.once(event, listener);
+
+        return () => {
+            this.socket.off(event, listener);
+        };
     }
 
     off(event: string) {

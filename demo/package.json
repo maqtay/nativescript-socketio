@@ -5,7 +5,7 @@
       "version": "4.3.0-2018-08-17-02"
     },
     "tns-android": {
-      "version": "4.3.0-2018-08-29-02"
+      "version": "5.2.1"
     }
   },
   "dependencies": {
@@ -13,7 +13,7 @@
     "nativescript-socketio": "../src",
     "nativescript-theme-core": "^1.0.4",
     "nativescript-unit-test-runner": "^0.3.4",
-    "tns-core-modules": "^4.3.0-2018-08-28-01"
+    "tns-core-modules": "^5.3.2"
   },
   "devDependencies": {
     "jasmine-core": "^2.5.2",
