@@ -119,8 +119,8 @@ export class SocketIO extends Common {
         return this.socket.status === SocketIOStatus.Connected;
     }
 
-    on(event: string, callback: (...payload) => void): void {
-        this.socket.onCallback(event, (data, ack) => {
+    on(event: string, callback: (...payload) => void): () => void {
+        const uuid = this.socket.onCallback(event, (data, ack) => {
             const d = deserialize(data);
             if (Array.isArray(d)) {
                 data = d[0];
@@ -134,10 +134,14 @@ export class SocketIO extends Common {
                 callback(data);
             }
         });
+
+        return () => {
+            this.socket.offWithId(uuid);
+        };
     }
 
-    once(event: string, callback: (...payload) => void): void {
-        this.socket.onceCallback(event, (data, ack) => {
+    once(event: string, callback: (...payload) => void): () => void {
+        const uuid = this.socket.onceCallback(event, (data, ack) => {
             const d = deserialize(data);
             if (Array.isArray(d)) {
                 data = d[0];
@@ -151,6 +155,10 @@ export class SocketIO extends Common {
                 callback(data);
             }
         });
+
+        return () => {
+            this.socket.offWithId(uuid);
+        };
     }
 
     off(event: string) {

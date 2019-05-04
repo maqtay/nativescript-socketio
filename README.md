@@ -127,8 +127,8 @@ node app
 | connect()                    |         | `void`                 | Connect to the server.                  |
 | disconnect()                    |         | `void`                 | Disconnects the socket.                   |
 | connected()   |         | `boolean` | Checks if the socket is connected                              |  |
-| on(event: string,(data: Object , ack? : Function))                       |         | `void`                       | Adds a handler for a client event.                              |
-| once(event: string,(data: Object , ack? : Function))                       |         | `void`                       | Adds a single-use handler for a client event.                              |
+| on(event: string,(data: Object , ack? : Function))                       |         | `Function`                       | Adds a handler for a client event. Return a function to remove the handler.                             |
+| once(event: string,(data: Object , ack? : Function))                       |         | `Function`                       | Adds a single-use handler for a client event. Return a function to remove the handler.                             |
 | off(event: string)                        |         | `void`                       | Removes handler(s) based on an event name.                               |
 | emit(event: string,data: {},ack?: Function)                      |         | `void`                       | Send an event to the server, with optional data items.                  |
 | joinNamespace(name: string)                      |         | `SocketIO`                       | Return SocketIO instance with the namespace                   |

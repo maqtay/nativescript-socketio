@@ -5,7 +5,7 @@ import { topmost } from 'tns-core-modules/ui/frame';
 import { SocketIO } from 'nativescript-socketio';
 import { ActionItem } from 'tns-core-modules/ui/action-bar';
 
-let socketIO: SocketIO, page: Page, context, pageData: any = fromObject({
+let socketIO: SocketIO, page: Page, context, fnOff, pageData: any = fromObject({
     list: new ObservableArray(),
     textMessage: '',
     currentUser: ''
@@ -22,6 +22,10 @@ export function pageLoaded(args: NavigatedData) {
     socketIO.on('new message', function (data) {
         pageData.list.push(data);
         console.log(JSON.stringify(data));
+    });
+
+    fnOff = socketIO.on('new message', function (data) {
+        alert(data.message);
     });
 
     socketIO.on('disconnect', function () {
@@ -66,4 +70,10 @@ export function sendText() {
 
 export function logOut(args) {
     socketIO.disconnect();
+}
+
+export function mute() {
+    if (fnOff) {
+        fnOff();
+    }
 }
