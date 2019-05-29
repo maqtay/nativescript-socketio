@@ -1,7 +1,9 @@
 import { Common } from './socketio.common';
 
 declare var SocketManager: any, NSURLComponents: any, NSURL: any, NSArray: any,
-    NSDictionary: any, NSNull: any, SocketIOStatus: any;
+    NSDictionary: any, NSNull: any, SocketIOStatus: any, NSHTTPCookie: any, NSHTTPCookieSecure: any,
+    NSHTTPCookiePath: any, NSHTTPCookieDomain: any, NSHTTPCookieExpires: any,
+    NSHTTPCookieMaximumAge: any, NSHTTPCookieName: any, NSHTTPCookieValue: any;
 
 export class SocketIO extends Common {
     protected socket: any;
@@ -62,6 +64,64 @@ export class SocketIO extends Common {
                         }
                     } else if (key === 'debug' && obj[key]) {
                         opts['log'] = true;
+                    } else if (key === 'cookie') {
+                        const cookie = obj[key] as string;
+                        const properties = {};
+                        properties[NSHTTPCookiePath] = '/';
+                        properties[NSHTTPCookieDomain] = (urlComponent.scheme || '') + '://' + (urlComponent.host || '');
+                        cookie.split(';').forEach((item, index) => {
+                            if (item.trim() === 'Secure') {
+                                properties[NSHTTPCookieSecure] = true;
+                            } else if (item.trim() === 'HttpOnly') {
+
+                            } else {
+                                const keyVal = item.trim();
+                                if (item.indexOf('=') > -1) {
+                                    const keyValItems = keyVal.split('=');
+                                    const key = keyValItems[0];
+                                    const val = keyValItems[1];
+                                    if (index === 0) {
+                                        properties[NSHTTPCookieName] = key;
+                                        properties[NSHTTPCookieValue] = val;
+                                    } else {
+                                        switch (key) {
+                                            case 'path':
+                                            case 'Path':
+                                                properties[NSHTTPCookiePath] = val;
+                                                break;
+                                            case 'domain':
+                                            case 'Domain':
+                                                properties[NSHTTPCookieDomain] = val;
+                                                break;
+                                            case 'expires':
+                                            case 'Expires':
+                                                properties[NSHTTPCookieExpires] = val;
+                                                break;
+                                            case 'max-age':
+                                            case 'Max-Age':
+                                                properties[NSHTTPCookieMaximumAge] = val;
+                                                break;
+                                            default:
+
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                        const props = NSDictionary.dictionaryWithDictionary(properties);
+                        const native_cookie = NSHTTPCookie.cookieWithProperties(props);
+                        if (native_cookie) {
+                            opts['cookies'] = NSArray.arrayWithObject(native_cookie);
+                        }
+                    } else if (key === 'transports') {
+                        const transports = obj[key];
+                        if (Array.isArray(transports) && transports.length === 1) {
+                            if (transports.indexOf(['websocket']) > -1) {
+                                opts['forceWebsockets'] = true;
+                            } else if (transports.indexOf(['polling']) > -1) {
+                                opts['forcePolling'] = true;
+                            }
+                        }
                     } else {
                         opts[key] = serialize(obj[key]);
                     }

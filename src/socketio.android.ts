@@ -32,15 +32,37 @@ export class SocketIO extends Common {
                         }
                     } else if (key === 'debug' && options[key]) {
                         co.fitcom.fancylogger.FancyLogger.reset(new co.fitcom.fancylogger.FancyLogger());
-
                         java.util.logging.Logger.getLogger(io.socket.client.Socket.class.getName()).setLevel(java.util.logging.Level.FINEST);
                         java.util.logging.Logger.getLogger(io.socket.engineio.client.Socket.class.getName()).setLevel(java.util.logging.Level.FINEST);
                         java.util.logging.Logger.getLogger(io.socket.client.Manager.class.getName()).setLevel(java.util.logging.Level.FINEST);
+                    } else if (key === 'transports' && options[key]) {
+                        const transports = options[key];
+                        if (Array.isArray(transports) && transports.length > 0) {
+                            opts.transports = transports;
+                        }
                     } else {
                         opts[key] = options[key];
                     }
                 }
                 this.socket = io.socket.client.IO.socket(args[0], opts);
+                this.socket.io().on(io.socket.client.Manager.EVENT_TRANSPORT, new io.socket.emitter.Emitter.Listener({
+                    call(transportArgs) {
+                        let transports = transportArgs[0];
+                        if (transports) {
+                            transports.on(io.socket.engineio.client.Transport.EVENT_REQUEST_HEADERS, new io.socket.emitter.Emitter.Listener({
+                                call(requestArgs) {
+                                    const cookies = options['cookie'];
+                                    if (cookies) {
+                                        const headers = requestArgs[0];
+                                        const list = new java.util.ArrayList();
+                                        list.add(cookies);
+                                        headers.put('Cookie', list);
+                                    }
+                                }
+                            }));
+                        }
+                    }
+                }));
                 break;
             }
 
