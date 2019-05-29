@@ -41,6 +41,7 @@
     "nativescript-dev-sass": "^1.6.0",
     "nativescript-dev-typescript": "^0.5.0",
     "nativescript-dev-webpack": "rc",
+    "tns-platform-declarations": "file:../src/node_modules/tns-platform-declarations",
     "typescript": "~2.8.2",
     "tslint": "~5.4.3"
   },

@@ -21,7 +21,9 @@ application.setResources(resources);
 
 export function pageLoaded(args) {
 
-    socketIO = new SocketIO(server, {});
+    socketIO = new SocketIO(server, {
+        cookie: `username=Osei;`
+    });
 
     socketIO.on('login', function (data) {
         console.log('Login');
