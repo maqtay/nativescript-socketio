@@ -16,6 +16,7 @@ io.on('connection', function (socket) {
 	let addedUser = false;
 
 	console.log('connection query params', socket.handshake.query);
+	console.log('connection headers', socket.request.headers);
 	console.log('connection cookies', socket.request.headers.cookie);
 	socket.on('add user', function (data, cb) {
 		if (addedUser) return;
