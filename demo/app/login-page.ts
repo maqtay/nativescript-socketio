@@ -4,6 +4,7 @@ import { isAndroid } from 'tns-core-modules/platform/platform';
 import { topmost } from 'tns-core-modules/ui/frame';
 import * as moment from 'moment';
 import * as application from 'tns-core-modules/application';
+
 let socketIO: SocketIO, pageData = fromObject({
     item: '',
     username: 'Osei'
@@ -22,7 +23,11 @@ application.setResources(resources);
 export function pageLoaded(args) {
 
     socketIO = new SocketIO(server, {
-        cookie: `username=Osei;`
+        cookie: `username=Osei;`,
+        transports: ['websocket'],
+        extraHeaders: {
+            access_token: 'TestToken-X'
+        }
     });
 
     socketIO.on('login', function (data) {
