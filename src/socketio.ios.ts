@@ -116,9 +116,9 @@ export class SocketIO extends Common {
                     } else if (key === 'transports') {
                         const transports = obj[key];
                         if (Array.isArray(transports) && transports.length === 1) {
-                            if (transports.indexOf(['websocket']) > -1) {
+                            if (transports.indexOf('websocket') > -1) {
                                 opts['forceWebsockets'] = true;
-                            } else if (transports.indexOf(['polling']) > -1) {
+                            } else if (transports.indexOf('polling') > -1) {
                                 opts['forcePolling'] = true;
                             }
                         }

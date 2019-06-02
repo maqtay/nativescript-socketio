@@ -38,7 +38,11 @@ export class SocketIO extends Common {
                     } else if (key === 'transports' && options[key]) {
                         const transports = options[key];
                         if (Array.isArray(transports) && transports.length > 0) {
-                            opts.transports = transports;
+                            const array = (Array as any).create('java.lang.String', transports.length);
+                            transports.forEach((item, index) => {
+                                array[index] = item;
+                            });
+                            opts.transports = array;
                         }
                     } else {
                         opts[key] = options[key];
@@ -52,11 +56,26 @@ export class SocketIO extends Common {
                             transports.on(io.socket.engineio.client.Transport.EVENT_REQUEST_HEADERS, new io.socket.emitter.Emitter.Listener({
                                 call(requestArgs) {
                                     const cookies = options['cookie'];
+                                    const extraHeaders = options['extraHeaders'];
+                                    const headers = requestArgs[0];
                                     if (cookies) {
-                                        const headers = requestArgs[0];
-                                        const list = new java.util.ArrayList();
-                                        list.add(cookies);
-                                        headers.put('Cookie', list);
+                                        if (headers && headers.put) {
+                                            const list = new java.util.ArrayList();
+                                            list.add(cookies);
+                                            headers.put('Cookie', list);
+                                        }
+                                    }
+
+                                    if (extraHeaders) {
+                                        if (headers && headers.put) {
+                                            const keys = Object.keys(extraHeaders);
+                                            keys.forEach((key) => {
+                                                const value = extraHeaders[key];
+                                                const list = new java.util.ArrayList();
+                                                list.add(value);
+                                                headers.put(key, list);
+                                            });
+                                        }
                                     }
                                 }
                             }));
