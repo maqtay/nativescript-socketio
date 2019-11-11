@@ -60,8 +60,7 @@ export class SocketIO extends Common {
                                     const headers = requestArgs[0];
                                     if (cookies) {
                                         if (headers && headers.put) {
-                                            const list = new java.util.ArrayList();
-                                            list.add(cookies);
+                                            const list = new java.util.ArrayList(java.util.Arrays.asList(cookies));
                                             headers.put('Cookie', list);
                                         }
                                     }
