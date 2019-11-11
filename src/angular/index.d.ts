@@ -6,7 +6,7 @@ export interface IOOptions {
     query?: {
         [key: string]: any;
     };
-    cookies?: string[];
+    cookie?: string[];
     extraHeaders?: {
         [key: string]: any;
     };
