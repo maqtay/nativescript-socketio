@@ -5,7 +5,7 @@ export interface IOOptions {
     compress?: boolean;
     debug?: boolean;
     query?: { [key: string]: any };
-    cookies?: string[];
+    cookie?: string[];
     extraHeaders?: { [key: string]: any };
     forceNew?: boolean;
     forcePolling?: boolean;
