@@ -3,9 +3,13 @@
 [![Build Status](https://travis-ci.org/triniwiz/nativescript-socketio.svg?branch=master)](https://travis-ci.org/triniwiz/nativescript-socketio)
 # nativescript-socketio
 **Note**
+This currently does not yet support Socket:IO v3.x
 
 ###### Android
-[Does not yet support Socket:IO v3.x, use v2.x instead!](https://github.com/socketio/socket.io-client-java#socketio-client-java)
+[V3 Support](https://github.com/socketio/socket.io-client-java/issues/641#issuecomment-741436309)
+
+##### iOS
+[V3 Support](https://github.com/socketio/socket.io-client-swift/issues/1308)
 
 # Usage
 
