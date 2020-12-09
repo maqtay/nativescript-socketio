@@ -2,6 +2,11 @@
 [![npm](https://img.shields.io/npm/dt/nativescript-socketio.svg?label=npm%20downloads)](https://www.npmjs.com/package/nativescript-socketio)
 [![Build Status](https://travis-ci.org/triniwiz/nativescript-socketio.svg?branch=master)](https://travis-ci.org/triniwiz/nativescript-socketio)
 # nativescript-socketio
+**Note**
+
+###### Android
+[Does not yet support Socket:IO v3.x, use v2.x instead!](https://github.com/socketio/socket.io-client-java#socketio-client-java)
+
 # Usage
 
 ```
