@@ -13,15 +13,18 @@ This currently does not yet support Socket:IO v3.x
 
 # Usage
 
+{N} v7+
+
+```
+npm install @triniwiz/nativescript-socketio
+```
+
+{N} v6<
+
 ```
 npm install nativescript-socketio
 ```
 
-or
-
-```
-tns plugin add nativescript-socketio
-```
 
 ## NativeScript Core
 
